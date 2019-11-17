@@ -29,6 +29,7 @@ int main(int argc, char *argv[]) {
                     (((mz->pageCount - 1) * 512) + mz->lastPageSize),
                     (((mz->pageCount - 1) * 512) + mz->lastPageSize));
                 printf("Total relocation entries:\t0x%04x\n", mz->relocationEntries);
+                printf("Header size in paragraphs:\t0x%04x (%d bytes)\n", mz->hdrSize, (mz->hdrSize * 16));
                 /* XXX: Do something */
                 if(mz->relocationOffset >= 0x40) {
                     if (!(mzx = malloc(sizeof(struct exe_mz_new_header)))) err(1, "Cannot allocate memory");
