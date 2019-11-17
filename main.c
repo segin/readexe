@@ -35,15 +35,18 @@ int main(int argc, char *argv[]) {
                 printf("Initial stack segment:\t\t0x%04x\n", mz->stackSegment);
                 printf("Initial stack pointer:\t\t0x%04x\n", mz->stackPointer);
                 printf("Checksum:\t\t\t0x%04x\n", mz->checksum);
+                printf("Initial CS:IP far pointer:\t%04x:%04x\n", (mz->initCodeSegIP >> 16), (mz->initCodeSegIP & 0xFFFF));
+                printf("Relocation table offset:\t0x%04x\n", mz->relocationOffset);
+                printf("Overlay:\t\t\t0x%04x\n", mz->overlayNumber);
                 /* XXX: Do something */
                 if(mz->relocationOffset >= 0x40) {
                     if (!(mzx = malloc(sizeof(struct exe_mz_new_header)))) err(1, "Cannot allocate memory");
                     ret = fread(mzx, 1, sizeof(struct exe_mz_new_header), fd);
-                    if (ret != sizeof(struct exe_mz_header)) {
+                    if (ret != sizeof(struct exe_mz_new_header)) {
                         if ((ret = ferror(fd))) warn("Cannot read %s", argv[1]);
                         if ((ret = feof(fd))) warnx("Unexpected end of file: %s", argv[1]);
                     } else {
-                        printf("Offset to NE/PE header: %#x\n", mzx->nextHeader);
+                        printf("Offset to NE/PE header:\t\t0x%08x\n", mzx->nextHeader);
                     }
                 }
         } else {
