@@ -32,6 +32,8 @@ int main(int argc, char *argv[]) {
                 printf("Header size in paragraphs:\t0x%04x (%d bytes)\n", mz->hdrSize, (mz->hdrSize * 16));
                 printf("Minimum memory in paragraphs:\t0x%04x (%d bytes)\n", mz->minMemory, (mz->minMemory * 16));
                 printf("Maximum memory in paragraphs:\t0x%04x (%d bytes)\n", mz->maxMemory, (mz->maxMemory * 16));
+                printf("Initial stack segment:\t\t0x%04x\n", mz->stackSegment);
+                printf("Initial stack pointer:\t\t0x%04x\n", mz->stackPointer);
                 /* XXX: Do something */
                 if(mz->relocationOffset >= 0x40) {
                     if (!(mzx = malloc(sizeof(struct exe_mz_new_header)))) err(1, "Cannot allocate memory");
