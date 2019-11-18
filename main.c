@@ -40,7 +40,7 @@ void read_next_header(FILE *fd, const struct exe_mz_new_header *mzx, const char 
                 // read_le_exe(fd, mzx, fname);
             } else {
                 printf("\n\n");
-                printf("Unknown next header type: %c%c\n", next_magic[0], next_magic[1]);
+                printf("Unknown next header type: %c%c/0x%04x\n", next_magic[0], next_magic[1], *((short *) &next_magic));
             }
         }
     }
