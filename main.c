@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <err.h>
 
+/* Big assumptions on little-endianiness here */
+
 #include "mz.h"
 #include "ne.h"
 
@@ -14,9 +16,29 @@ void read_next_header(FILE *fd, const struct exe_mz_new_header *mzx, const char 
     char next_magic[2];
     int ret;
 
-    if((ret = fseek(fd, mzx->nextHeader, SEEK_SET))) {
+    if(!(ret = fseek(fd, mzx->nextHeader, SEEK_SET))) {
         if ((ret = ferror(fd))) warn("Cannot read %s", fname);
         if ((ret = feof(fd))) warnx("Unexpected end of file: %s", fname);
+    } else {
+        ret = fread(&next_magic, 1, sizeof(next_magic), fd);
+        if (ret != sizeof(next_magic)) {
+            if ((ret = ferror(fd))) warn("Cannot read %s", fname);
+            if ((ret = feof(fd))) warnx("Unexpected end of file: %s", fname);
+        } else {
+            if (((next_magic[0] == 'N') && (next_magic[1] == 'E'))) {
+                printf("\n\n");
+                printf("New Executable header found at offset 0x%08x\n", mzx->nextHeader);
+                read_ne_exe(fd, mzx, fname);
+            } else if (((next_magic[0] == 'P') && (next_magic[1] == 'E'))) {
+                printf("Portable Executable header found at offset 0x%08x\n", mzx->nextHeader);
+                // read_pe_exe(fd, mzx, fname);
+            } else if (((next_magic[0] == 'L') && (next_magic[1] == 'E')) ||
+                       ((next_magic[0] == 'L') && (next_magic[1] == 'X'))) {
+                printf("Linear Executable header found at offset 0x%08x\n", mzx->nextHeader);
+                // read_le_exe(fd, mzx, fname);
+            };
+        }
+
     }
 }
 
