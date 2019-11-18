@@ -6,6 +6,20 @@
 #include "mz.h"
 #include "ne.h"
 
+void read_ne_exe(FILE *fd, const struct exe_mz_new_header *mzx, const char fname[]) {
+
+}
+
+void read_next_header(FILE *fd, const struct exe_mz_new_header *mzx, const char fname[]) {
+    char next_magic[2];
+    int ret;
+
+    if((ret = fseek(fd, mzx->nextHeader, SEEK_SET))) {
+        if ((ret = ferror(fd))) warn("Cannot read %s", fname);
+        if ((ret = feof(fd))) warnx("Unexpected end of file: %s", fname);
+    }
+}
+
 int main(int argc, char *argv[]) {
     struct exe_mz_header *mz = NULL;
     struct exe_mz_new_header *mzx = NULL;
@@ -48,6 +62,7 @@ int main(int argc, char *argv[]) {
                         if ((ret = feof(fd))) warnx("Unexpected end of file: %s", argv[1]);
                     } else {
                         printf("Offset to NE/PE header:\t\t0x%08x\n", mzx->nextHeader);
+                        read_next_header(fd, mzx, argv[1]);
                     }
                 }
         } else {
