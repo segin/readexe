@@ -24,7 +24,7 @@ void read_ne_exe(FILE *fd, const struct exe_mz_new_header *mzx, const char fname
         if ((ret = ferror(fd))) warn("Cannot read %s", fname);
         if ((ret = feof(fd))) warnx("Unexpected end of file: %s", fname);
     } else {
-        
+        read_ne_header(ne);
         read_ne_segments(fd, ne, fname);
     }
 
@@ -37,7 +37,8 @@ void read_ne_segments(FILE *fd, const struct exe_ne_header *ne, const char fname
 }
 
 void read_ne_header(const struct exe_ne_header *ne) {
-
+    printf("New Executable with magic:\t%c%c", ne->magic[0], ne->magic[1]);
+    
 }
 
 void read_next_header(FILE *fd, const struct exe_mz_new_header *mzx, const char fname[]) {
