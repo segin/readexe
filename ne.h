@@ -10,7 +10,7 @@ struct exe_ne_header {
     uint16_t    entryTableOffset; /* from start of NE header */
     uint16_t    entryTableSize;
     uint32_t    fileCrc;
-    struct progflags {
+    struct {
         unsigned int    dataType   : 2;
         unsigned int    globalInit : 1;
         unsigned int    pmModeOnly : 1;
@@ -19,7 +19,7 @@ struct exe_ne_header {
         unsigned int    ops80386   : 1;
         unsigned int    ops80x87   : 1;
     };
-    struct appflags {
+    struct {
         unsigned int    appType    : 2;
         unsigned int    _reserved2 : 1;
         unsigned int    executable : 1;
@@ -38,7 +38,7 @@ struct exe_ne_header {
     uint16_t    nonRezTblSize;
     uint16_t    segTableOffset;
     uint16_t    resTableOffset;
-    
+
 
 };
 
@@ -63,6 +63,6 @@ enum exe_ne_header_ostypes {
     OS_MSDOS,           /* MS-DOS 4.00 for the European market used NE executables */
     OS_WIN386,          /* Windows/386 2.x specific */
     OS_BOSS             /* Borland Operating System Services */
-}
+};
 
 #endif
