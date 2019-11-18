@@ -18,16 +18,17 @@ void read_ne_exe(FILE *fd, const struct exe_mz_new_header *mzx, const char fname
     struct exe_ne_header *ne;
     int ret;
 
-    if (!(ne = malloc(sizeof(struct exe_ne_header)))) err(1, "Cannot allocate memory");
-    ret = fread(ne, 1, sizeof(struct exe_ne_header), fd);
-    if (ret != sizeof(struct exe_ne_header)) {
-        if ((ret = ferror(fd))) warn("Cannot read %s", fname);
-        if ((ret = feof(fd))) warnx("Unexpected end of file: %s", fname);
-    } else {
-        read_ne_header(ne);
-        read_ne_segments(fd, ne, fname);
-    }
-
+    if ((ne = malloc(sizeof(struct exe_ne_header)))) { 
+        fseek(fd, mzx->nextHeader, SEEK_SET);
+        ret = fread(ne, 1, sizeof(struct exe_ne_header), fd);
+        if (ret != sizeof(struct exe_ne_header)) {
+            if ((ret = ferror(fd))) warn("Cannot read %s", fname);
+            if ((ret = feof(fd))) warnx("Unexpected end of file: %s", fname);
+        } else {
+            read_ne_header(ne);
+            read_ne_segments(fd, ne, fname);
+        }
+    } else err(1, "Cannot allocate memory");
     if (ne) free (ne);
     return;
 }
@@ -37,8 +38,9 @@ void read_ne_segments(FILE *fd, const struct exe_ne_header *ne, const char fname
 }
 
 void read_ne_header(const struct exe_ne_header *ne) {
-    printf("New Executable with magic:\t%c%c", ne->magic[0], ne->magic[1]);
-    
+    printf("New Executable with magic:\t%c%c\n", ne->magic[0], ne->magic[1]);
+    printf("Linker version:\t\t%d.%d\n", ne->linkerMajor, ne->linkerMinor);
+    printf("Windows version:\t\t%d.%d (0x%04x)\n",ne->windowsVersionMajor, ne->windowsVersionMinor, ne->windowsVersion); 
 }
 
 void read_next_header(FILE *fd, const struct exe_mz_new_header *mzx, const char fname[]) {
