@@ -29,19 +29,40 @@ struct exe_ne_header {
     };
     uint8_t     autoDataSegAddr;
     uint8_t     _reserved4;
+    uint16_t    initHeapSize;
+    uint16_t    initStackSize;
+    uint32_t    entryPoint;
+    uint32_t    initStackPtr;
+    uint16_t    segmentCount;
+    uint16_t    modRefCount;
+    uint16_t    nonRezTblSize;
+    uint16_t    segTableOffset;
+    uint16_t    resTableOffset;
+    
 
 };
 
 enum exe_ne_header_data_typebits {
-    DATA_SINGLEDATA = 1,
+    DATA_NONE,
+    DATA_SINGLEDATA,
     DATA_MULTIPLEDATA,
     DATA_AUTODATA
 };
 
 enum exe_ne_header_app_typebits {
-    APP_FULLSCREEN = 1,
+    APP_NONE,
+    APP_FULLSCREEN,
     APP_COMPATIBLE,
     APP_WINPM
 };
+
+enum exe_ne_header_ostypes {
+    OS_UNKNOWN,
+    OS_OS2,             /* OS/2 1.x */
+    OS_WINDOWS,         /* Windows */
+    OS_MSDOS,           /* MS-DOS 4.00 for the European market used NE executables */
+    OS_WIN386,          /* Windows/386 2.x specific */
+    OS_BOSS             /* Borland Operating System Services */
+}
 
 #endif
