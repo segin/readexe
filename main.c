@@ -39,7 +39,7 @@ void read_ne_segments(FILE *fd, const struct exe_ne_header *ne, const char fname
 
 void read_ne_header(const struct exe_ne_header *ne) {
     printf("New Executable with magic:\t%c%c\n", ne->magic[0], ne->magic[1]);
-    printf("Linker version:\t\t%d.%d\n", ne->linkerMajor, ne->linkerMinor);
+    printf("Linker version:\t\t\t%d.%d\n", ne->linkerMajor, ne->linkerMinor);
     printf("Windows version:\t\t%d.%d (0x%04x)\n",ne->windowsVersionMajor, ne->windowsVersionMinor, ne->windowsVersion); 
 }
 
