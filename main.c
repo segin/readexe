@@ -34,6 +34,37 @@ void read_ne_exe(FILE *fd, const struct exe_mz_new_header *mzx, const char fname
 }
 
 void read_ne_segments(FILE *fd, const struct exe_ne_header *ne, const char fname[]) {
+    struct exe_ne_segment *neseg;
+    int ret, i;
+
+    printf("\n\n");
+    if ((neseg = malloc(sizeof(struct exe_ne_segment) * ne->segmentCount))) { 
+        fseek(fd, (ne->segmentTableOffset << ne->offsetShiftCount), SEEK_SET);
+        ret = fread(neseg, 1, (sizeof(struct exe_ne_segment) * ne->segmentCount), fd);
+        if (ret != (sizeof(struct exe_ne_segment) * ne->segmentCount)) {
+            if ((ret = ferror(fd))) warn("Cannot read %s", fname);
+            if ((ret = feof(fd))) warnx("Unexpected end of file: %s", fname);
+        } else {
+            for(i = 0; i < ne->segmentCount; i++) {
+                printf("Segment %d: %s%s%s%s%s%s\n", i, 
+                    neseg[i].segType ? "CODE " : "DATA ",
+                    neseg[i].allocated ? "ALLOCATED " : "",
+                    neseg[i].loaded ? "LOADED " : "",
+                    neseg[i].relocatable ? "MOVEABLE " : "",
+                    neseg[i].shared ? "PURE " : "IMPURE ",
+                    neseg[i].preload ? "PRELOAD " : ""
+                );
+                printf("  Offset      (file)   Length   (dec) \n");
+                printf("  0x%04x  0x%08x   0x%04x   %5d\n\n", 
+                    neseg[i].segmentOffset, 
+                    neseg[i].segmentOffset << ne->offsetShiftCount, 
+                    neseg[i].segmentSize ? neseg[i].segmentSize : 0x10000, 
+                    neseg[i].segmentSize ? neseg[i].segmentSize : 0x10000);
+
+            }
+        }
+    } else err(1, "Cannot allocate memory");
+    if (neseg) free (neseg);
     printf("Debugging method / read_ne_segments() reached.\n");
 }
 
