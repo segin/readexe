@@ -91,6 +91,17 @@ void read_ne_header(const struct exe_ne_header *ne, const struct exe_mz_new_head
     printf("Initial heap size:\t\t0x%04x\n", ne->initHeapSize);
     printf("Initial stack size:\t\t0x%04x\n", ne->initStackSize);
     printf("Initial CS:IP (entrypoint):\t%04x:%04x\n", (ne->entryPoint >> 16), (ne->entryPoint & 0xFFFF));
+    printf("Initial SS:SP (stack):\t\t%04x:%04x\n", (ne->initStackPtr >> 16), (ne->initStackPtr & 0xFFFF));
+    printf("Segment count:\t\t\t0x%04x (%d)\n", ne->segmentCount, ne->segmentCount);
+    printf("Module reference count:\t\t%04x (%d)\n", ne->modRefCount, ne->modRefCount);
+    printf("Non-resident name table size:\t0x%04x (%d bytes)\n", ne->nonResidentTableSize, ne->nonResidentTableSize);
+    printf("Offset of segment table:\t0x%04x (File offset 0x%08x)\n", ne->segmentTableOffset, (ne->segmentTableOffset << ne->offsetShiftCount));
+    printf("Offset of resource table:\t0x%04x (File offset 0x%08x)\n", ne->resourceTableOffset, (ne->resourceTableOffset << ne->offsetShiftCount));
+    printf("Offset of resident name table:\t0x%04x (File offset 0x%08x)\n", ne->residentNamesTableOffset, (ne->residentNamesTableOffset << ne->offsetShiftCount));
+    printf("Offset of module table:\t\t0x%04x (File offset 0x%08x)\n", ne->modulesTableOffset, (ne->modulesTableOffset << ne->offsetShiftCount));
+    printf("Offset of imported names table:\t0x%04x (File offset 0x%08x)\n", ne->importedNamesTableOffset, (ne->importedNamesTableOffset << ne->offsetShiftCount));
+    printf("Non-resident names table:\t0x%08x (File offset)\n", ne->nonResidentTableOffset);
+    printf("Movable entry points:\t\t0x%08x (%d)\n", ne->movableEntryPoints, ne->movableEntryPoints);
     printf("Windows version:\t\t%d.%d (0x%04x)\n", ne->windowsVersionMajor, ne->windowsVersionMinor, ne->windowsVersion); 
 }
 
