@@ -4,6 +4,7 @@
 #include <err.h>
 
 #include "mz.h"
+#include "ne.h"
 
 int main(int argc, char *argv[]) {
     struct exe_mz_header *mz = NULL;
