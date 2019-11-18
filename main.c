@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
                 printf("Initial CS:IP far pointer:\t%04x:%04x\n", (mz->initCodeSegIP >> 16), (mz->initCodeSegIP & 0xFFFF));
                 printf("Relocation table offset:\t0x%04x\n", mz->relocationOffset);
                 printf("Overlay:\t\t\t0x%04x\n", mz->overlayNumber);
-                /* XXX: Do something */
+                /* check for next header */
                 if(mz->relocationOffset >= 0x40) {
                     if (!(mzx = malloc(sizeof(struct exe_mz_new_header)))) err(1, "Cannot allocate memory");
                     ret = fread(mzx, 1, sizeof(struct exe_mz_new_header), fd);
