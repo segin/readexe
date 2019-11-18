@@ -30,13 +30,17 @@ void read_next_header(FILE *fd, const struct exe_mz_new_header *mzx, const char 
                 printf("New Executable header found at offset 0x%08x\n", mzx->nextHeader);
                 read_ne_exe(fd, mzx, fname);
             } else if (((next_magic[0] == 'P') && (next_magic[1] == 'E'))) {
+                printf("\n\n");
                 printf("Portable Executable header found at offset 0x%08x\n", mzx->nextHeader);
                 // read_pe_exe(fd, mzx, fname);
             } else if (((next_magic[0] == 'L') && (next_magic[1] == 'E')) ||
                        ((next_magic[0] == 'L') && (next_magic[1] == 'X'))) {
+                printf("\n\n");
                 printf("Linear Executable header found at offset 0x%08x\n", mzx->nextHeader);
                 // read_le_exe(fd, mzx, fname);
-            } else printf("Unknown next header type: %c%c\n", next_magic[0], next_magic[1]);
+            } else {
+                printf("\n\n");
+                printf("Unknown next header type: %c%c\n", next_magic[0], next_magic[1]);
         }
     }
 }
