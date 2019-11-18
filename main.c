@@ -11,7 +11,7 @@
 void read_ne_exe(FILE *fd, const struct exe_mz_new_header *mzx, const char fname[]);
 void read_ne_segments(FILE *fd, const struct exe_ne_header *ne, const char fname[]);
 void read_next_header(FILE *fd, const struct exe_mz_new_header *mzx, const char fname[]);
-void read_ne_header(const struct exe_ne_header *ne);
+void read_ne_header(const struct exe_ne_header *ne, const struct exe_mz_new_header *mzx);
 int main(int argc, char *argv[]);
 
 void read_ne_exe(FILE *fd, const struct exe_mz_new_header *mzx, const char fname[]) {
@@ -25,7 +25,7 @@ void read_ne_exe(FILE *fd, const struct exe_mz_new_header *mzx, const char fname
             if ((ret = ferror(fd))) warn("Cannot read %s", fname);
             if ((ret = feof(fd))) warnx("Unexpected end of file: %s", fname);
         } else {
-            read_ne_header(ne);
+            read_ne_header(ne, mzx);
             read_ne_segments(fd, ne, fname);
         }
     } else err(1, "Cannot allocate memory");
@@ -37,10 +37,61 @@ void read_ne_segments(FILE *fd, const struct exe_ne_header *ne, const char fname
     printf("Debugging method / read_ne_segments() reached.\n");
 }
 
-void read_ne_header(const struct exe_ne_header *ne) {
+void read_ne_header(const struct exe_ne_header *ne, const struct exe_mz_new_header *mzx) {
+    char *msg;
+    printf("Debug: sizeof(struct exe_ne_header): %lu\n", sizeof(struct exe_ne_header));
     printf("New Executable with magic:\t%c%c\n", ne->magic[0], ne->magic[1]);
     printf("Linker version:\t\t\t%d.%d\n", ne->linkerMajor, ne->linkerMinor);
-    printf("Windows version:\t\t%d.%d (0x%04x)\n",ne->windowsVersionMajor, ne->windowsVersionMinor, ne->windowsVersion); 
+    printf("Entry table offset:\t\t0x%04x (File offset 0x%08x)\n", ne->entryTableOffset, (ne->entryTableOffset + mzx->nextHeader));
+    printf("Entry table size:\t\t0x%04x (%d bytes)\n", ne->entryTableSize, ne->entryTableSize);
+    printf("Header CRC:\t\t\t0x%08x\n", ne->fileCrc);
+    printf(".EXE Flags:\n");
+    switch(ne->dataType) {
+        case DATA_NONE:
+            msg = "Not indicated";
+            break;
+        case DATA_SINGLEDATA:
+            msg = "SINGLEDATA";
+            break;
+        case DATA_MULTIPLEDATA:
+            msg = "MULTIPLEDATA";
+            break;
+        case DATA_AUTODATA:
+            msg = "AUTODATA";
+            break;
+    }
+    printf(" - Data Segment Model:\t\t%s\n", msg);
+    printf(" - Global initialization:\t%s\n", ne->globalInit ? "true" : "false");
+    printf(" - Protected Mode only:\t\t%s\n", ne->pmModeOnly ? "true" : "false");
+    printf(" - 8086 opcodes used:\t\t%s\n", ne->ops8086 ? "true" : "false");
+    printf(" - 80286 opcodes used:\t\t%s\n", ne->ops80286 ? "true" : "false");
+    printf(" - 80386 opcodes used:\t\t%s\n", ne->ops80386 ? "true" : "false");
+    printf(" - FPU/80x87 opcodes used:\t%s\n", ne->ops80x87 ? "true" : "false");
+    printf("Application flags:\n");
+    switch(ne->appType) {
+        case APP_NONE:
+            msg = "Not indicated";
+            break;
+        case APP_FULLSCREEN:
+            msg = "OS/2 Fullscreen CUI application";
+            break;
+        case APP_COMPATIBLE:
+            msg = "OS/2 Presentation Manager compatible CUI application";
+            break;
+        case APP_WINPM:
+            msg = "Windows or Presentation Manager GUI application";
+            break;
+    }
+    printf(" - Application type:\t\t%s\n", msg);
+    printf(" - OS/2 Family executable:\t%s\n", ne->os2FamExec ? "true" : "false");
+    printf(" - Is executable:\t\t%s\n", ne->executable ? "true" : "false");
+    printf(" - Generated with link errors:\t%s\n", ne->linkErrors ? "true" : "false");
+    printf(" - Is library (DLL or driver):\t%s\n", ne->libraryBit ? "true" : "false");
+    printf("AUTODATA segment address:\t0x%04x\n", ne->autoDataSegAddr);
+    printf("Initial heap size:\t\t0x%04x\n", ne->initHeapSize);
+    printf("Initial stack size:\t\t0x%04x\n", ne->initStackSize);
+    printf("Initial CS:IP (entrypoint):\t%04x:%04x\n", (ne->entryPoint >> 16), (ne->entryPoint & 0xFFFF));
+    printf("Windows version:\t\t%d.%d (0x%04x)\n", ne->windowsVersionMajor, ne->windowsVersionMinor, ne->windowsVersion); 
 }
 
 void read_next_header(FILE *fd, const struct exe_mz_new_header *mzx, const char fname[]) {
@@ -94,7 +145,7 @@ int main(int argc, char *argv[]) {
         if (    ((mz->magic[0] == 'M') && (mz->magic[1] == 'Z')) 
             ||  ((mz->magic[1] == 'M') && (mz->magic[0] == 'Z')) ) {
                 printf("%s:\n", argv[1]);
-                printf("DOS executable with header\t%c%c\n", mz->magic[0], mz->magic[1]);
+                printf("DOS executable with magic:\t%c%c\n", mz->magic[0], mz->magic[1]);
                 printf("Number of executable pages:\t0x%04x (%d+ bytes)\n", mz->pageCount, ((mz->pageCount - 1) * 512));
                 printf("Size of final page:\t\t%d bytes\n", mz->lastPageSize);
                 printf("Total code size:\t\t0x%08x (%d bytes)\n", 
