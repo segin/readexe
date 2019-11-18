@@ -20,8 +20,8 @@ struct exe_ne_header {
         unsigned int    ops80x87   : 1;
     };
     struct {
-        unsigned int    appType    : 2;
-        unsigned int    _reserved2 : 1;
+        unsigned int    appType    : 3;
+        unsigned int    os2FamExec : 1;
         unsigned int    executable : 1;
         unsigned int    linkErrors : 1;
         unsigned int    _reserved3 : 1;
