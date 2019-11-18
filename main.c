@@ -41,6 +41,7 @@ void read_next_header(FILE *fd, const struct exe_mz_new_header *mzx, const char 
             } else {
                 printf("\n\n");
                 printf("Unknown next header type: %c%c\n", next_magic[0], next_magic[1]);
+            }
         }
     }
 }
