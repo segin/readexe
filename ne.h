@@ -53,6 +53,16 @@ struct exe_ne_header {
         unsigned int    fastLoad     : 1;
         unsigned int    _reserved5   : 4;
     };
+    uint16_t    returnThunksOffset;
+    uint16_t    segmentReferenceOffset;
+    uint16_t    minimumCodeSwapArea;
+    union {
+        uint16_t windowsVersion;
+        struct {
+            uint8_t windowsVersionMinor;
+            uint8_t windowsVersionMajor;
+        };
+    };
 };
 
 struct exe_ne_segment {
