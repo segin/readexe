@@ -50,8 +50,9 @@ struct exe_ne_header {
         unsigned int    os2LFN       : 1;
         unsigned int    os2PMode     : 1;
         unsigned int    os2Fonts     : 1;
-        unsigned int    
-    }
+        unsigned int    fastLoad     : 1;
+        unsigned int    _reserved5   : 4;
+    };
 };
 
 struct exe_ne_segment {
