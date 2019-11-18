@@ -11,21 +11,21 @@ struct exe_ne_header {
     uint16_t    entryTableSize;
     uint32_t    fileCrc;
     struct {
-        unsigned int    dataType   : 2;
-        unsigned int    globalInit : 1;
-        unsigned int    pmModeOnly : 1;
-        unsigned int    ops8086    : 1;
-        unsigned int    ops80286   : 1;
-        unsigned int    ops80386   : 1;
-        unsigned int    ops80x87   : 1;
+        uint8_t    dataType   : 2;
+        uint8_t    globalInit : 1;
+        uint8_t    pmModeOnly : 1;
+        uint8_t    ops8086    : 1;
+        uint8_t    ops80286   : 1;
+        uint8_t    ops80386   : 1;
+        uint8_t    ops80x87   : 1;
     };
     struct {
-        unsigned int    appType    : 3;
-        unsigned int    os2FamExec : 1;
-        unsigned int    executable : 1;
-        unsigned int    linkErrors : 1;
-        unsigned int    _reserved3 : 1;
-        unsigned int    libraryBit : 1;
+        uint8_t    appType    : 3;
+        uint8_t    os2FamExec : 1;
+        uint8_t    executable : 1;
+        uint8_t    linkErrors : 1;
+        uint8_t    _reserved3 : 1;
+        uint8_t    libraryBit : 1;
     };
     uint8_t     autoDataSegAddr;
     uint8_t     _reserved4;
@@ -47,11 +47,11 @@ struct exe_ne_header {
     uint16_t    resourceTableSize;
     uint8_t     targetOS;                   /* defined in enum exe_ne_header_ostypes */
     struct {
-        unsigned int    os2LFN       : 1;
-        unsigned int    os2PMode     : 1;
-        unsigned int    os2Fonts     : 1;
-        unsigned int    fastLoad     : 1;
-        unsigned int    _reserved5   : 4;
+        uint8_t    os2LFN       : 1;
+        uint8_t    os2PMode     : 1;
+        uint8_t    os2Fonts     : 1;
+        uint8_t    fastLoad     : 1;
+        uint8_t    _reserved5   : 4;
     };
     uint16_t    returnThunksOffset;
     uint16_t    segmentReferenceOffset;
@@ -69,18 +69,18 @@ struct exe_ne_segment {
     uint16_t    segmentOffset;              /* relative to the beginning of file, times 512 bytes. Maybe times ne->offsetShiftCount. */
     uint16_t    segmentSize;                /* if 0, then 65536, unless offset is also 0, then the segment is empty. */
     struct {
-        unsigned int    segType      : 1;
-        unsigned int    allocated    : 1;
-        unsigned int    loaded       : 1;
-        unsigned int    _reserved1   : 1;
-        unsigned int    relocatable  : 1;
-        unsigned int    shared       : 1;
-        unsigned int    preload      : 1;
-        unsigned int    protection   : 1;
-        unsigned int    relocations  : 1;
-        unsigned int    _reserved2   : 3;
-        unsigned int    discardable  : 1;
-        unsigned int    _reserved3   : 3;
+        uint16_t    segType      : 1;
+        uint16_t    allocated    : 1;
+        uint16_t    loaded       : 1;
+        uint16_t    _reserved1   : 1;
+        uint16_t    relocatable  : 1;
+        uint16_t    shared       : 1;
+        uint16_t    preload      : 1;
+        uint16_t    protection   : 1;
+        uint16_t    relocations  : 1;
+        uint16_t    _reserved2   : 3;
+        uint16_t    discardable  : 1;
+        uint16_t    _reserved3   : 3;
     };
     uint16_t    minimumAllocation;
 };
