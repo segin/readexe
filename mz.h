@@ -1,5 +1,8 @@
 /* Define DOS EXE header format */
 
+#ifndef MZ_H
+#define MZ_H
+
 #include <stdint.h>
 
 struct exe_mz_header { 
@@ -24,3 +27,5 @@ struct exe_mz_new_header {
     char        behaviorsAdditonal[26];
     uint32_t    nextHeader; /* offset to actual NE/PE header */ 
 };
+
+#endif
