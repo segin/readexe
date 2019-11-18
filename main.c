@@ -8,7 +8,35 @@
 #include "mz.h"
 #include "ne.h"
 
+void read_ne_exe(FILE *fd, const struct exe_mz_new_header *mzx, const char fname[]);
+void read_ne_segments(FILE *fd, const struct exe_ne_header *ne, const char fname[]);
+void read_next_header(FILE *fd, const struct exe_mz_new_header *mzx, const char fname[]);
+void read_ne_header(const struct exe_ne_header *ne);
+int main(int argc, char *argv[]);
+
 void read_ne_exe(FILE *fd, const struct exe_mz_new_header *mzx, const char fname[]) {
+    struct exe_ne_header *ne;
+    int ret;
+
+    if (!(ne = malloc(sizeof(struct exe_ne_header)))) err(1, "Cannot allocate memory");
+    ret = fread(ne, 1, sizeof(struct exe_ne_header), fd);
+    if (ret != sizeof(struct exe_ne_header)) {
+        if ((ret = ferror(fd))) warn("Cannot read %s", fname);
+        if ((ret = feof(fd))) warnx("Unexpected end of file: %s", fname);
+    } else {
+        
+        read_ne_segments(fd, ne, fname);
+    }
+
+    if (ne) free (ne);
+    return;
+}
+
+void read_ne_segments(FILE *fd, const struct exe_ne_header *ne, const char fname[]) {
+    printf("Debugging method / read_ne_segments() reached.\n");
+}
+
+void read_ne_header(const struct exe_ne_header *ne) {
 
 }
 
@@ -16,7 +44,7 @@ void read_next_header(FILE *fd, const struct exe_mz_new_header *mzx, const char 
     char next_magic[2];
     int ret;
 
-    if(!(ret = fseek(fd, mzx->nextHeader, SEEK_SET))) {
+    if((ret = fseek(fd, mzx->nextHeader, SEEK_SET))) {
         if ((ret = ferror(fd))) warn("Cannot read %s", fname);
         if ((ret = feof(fd))) warnx("Unexpected end of file: %s", fname);
     } else {
