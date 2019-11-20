@@ -1,0 +1,15 @@
+PROGNAME = readexe
+CC		 = ia16-elf-gcc 
+CFLAGS	 = -march=i8086 -mcmodel=small -I.
+LDFLAGS  = -mcmodel=small
+RM		 = rm -f
+BINEXT	 = .exe
+OBJEXT	 = o
+SRC		 = main.c err.c
+OBJ		 = $(SRC:.c=.$(OBJEXT))
+
+$(PROGNAME)$(BINEXT): $(OBJ)
+	$(CC) -o $(PROGNAME)$(BINEXT) $(LDFLAGS) $(OBJ)
+
+clean:
+	$(RM) $(PROGNAME)$(BINEXT) *.$(OBJEXT)
