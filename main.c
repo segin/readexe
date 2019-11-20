@@ -192,7 +192,7 @@ int main(int argc, char *argv[]) {
     int ret;
 
 #ifdef NEED_ERR
-    __progname = argv[0];
+    setprogname(argv[0]);
 #endif
 
     if (argc < 2) errx(1, "Not enough arguments.");
