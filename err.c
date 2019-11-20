@@ -35,6 +35,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+char *__progname;
+
 void
 vwarnc(int code, const char *format, va_list ap)
 {
@@ -115,4 +117,12 @@ errx(int eval, const char *format, ...)
 	va_start(ap, format);
 	verrx(eval, format, ap);
 	va_end(ap);
+}
+
+void setprogname(char *progname) {
+    __progname = progname;
+}
+
+const char *getprogname(void) {
+    return __progname;
 }

@@ -33,7 +33,7 @@ void warnx(const char *format, ...);
 void err(int status, const char *format, ...);
 void verrx(int eval, const char *format, va_list ap);
 void errx(int eval, const char *format, ...);
-void setprogname(const char *progname);
-const char *getprogname();
+void setprogname(char *progname);
+const char *getprogname(void);
 
 #endif 
