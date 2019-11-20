@@ -18,7 +18,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "err.h" /* Our local copy is a compatibility fallback, use libc's first */
+#include <err.h> /* -I. or such for platforms without err.h */
 
 /* Big assumptions on little-endianiness here */
 
