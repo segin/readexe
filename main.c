@@ -63,13 +63,15 @@ void read_ne_segments(FILE *fd, const struct exe_ne_header *ne, const char fname
             if ((ret = feof(fd))) warnx("Unexpected end of file: %s", fname);
         } else {
             for(i = 0; i < ne->segmentCount; i++) {
-                printf("Segment %d: %s%s%s%s%s%s\n", i, 
+                printf("Segment %d: %s%s%s%s%s%s%s%s\n", i, 
                     neseg[i].segType ? "CODE " : "DATA ",
                     neseg[i].allocated ? "ALLOCATED " : "",
                     neseg[i].loaded ? "LOADED " : "",
                     neseg[i].relocatable ? "MOVEABLE " : "",
                     neseg[i].shared ? "PURE " : "IMPURE ",
-                    neseg[i].preload ? "PRELOAD " : ""
+                    neseg[i].preload ? "PRELOAD " : "",
+                    neseg[i].relocations ? "RELOCINFO " : "",
+                    neseg[i].discardable ? "DISCARD " : ""
                 );
                 printf("  Offset      (file)   Length   (dec) \n");
                 printf("  0x%04x  0x%08x   0x%04x   %5d\n\n", 
