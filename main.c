@@ -93,7 +93,7 @@ void read_ne_header(const struct exe_ne_header *ne, const struct exe_mz_new_head
     printf("Entry table offset:\t\t0x%04x (File offset 0x%08x)\n", ne->entryTableOffset, (ne->entryTableOffset + mzx->nextHeader));
     printf("Entry table size:\t\t0x%04x (%d bytes)\n", ne->entryTableSize, ne->entryTableSize);
     printf("Header CRC:\t\t\t0x%08x\n", ne->fileCrc);
-    printf(".EXE Flags:\n");
+    printf(".EXE Flags:\t\t\t0x%02x\n", ne->progFlags);
     switch(ne->dataType) {
         case DATA_NONE:
             msg = "Not indicated";
@@ -115,7 +115,7 @@ void read_ne_header(const struct exe_ne_header *ne, const struct exe_mz_new_head
     printf(" - 80286 opcodes used:\t\t%s\n", ne->ops80286 ? "true" : "false");
     printf(" - 80386 opcodes used:\t\t%s\n", ne->ops80386 ? "true" : "false");
     printf(" - FPU/80x87 opcodes used:\t%s\n", ne->ops80x87 ? "true" : "false");
-    printf("Application flags:\n");
+    printf("Application flags:\t\t0x%02x\n", ne->appFlags);
     switch(ne->appType) {
         case APP_NONE:
             msg = "Not indicated";
