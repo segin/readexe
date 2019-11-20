@@ -28,3 +28,7 @@ If you are building for MS-DOS or FreeDOS using [GCC-IA16](https://github.com/tk
 ```
 make -f Makefile.dos
 ```
+
+## Sample output
+
+An output sample [can be found here](http://sprunge.us/QIhmFA).
