@@ -10,22 +10,28 @@ struct exe_ne_header {
     uint16_t    entryTableOffset;           /* from start of NE header */
     uint16_t    entryTableSize;
     uint32_t    fileCrc;
-    struct {
-        uint8_t    dataType   : 2;
-        uint8_t    globalInit : 1;
-        uint8_t    pmModeOnly : 1;
-        uint8_t    ops8086    : 1;
-        uint8_t    ops80286   : 1;
-        uint8_t    ops80386   : 1;
-        uint8_t    ops80x87   : 1;
+    union {
+        uint8_t     progFlags;
+        struct {
+            uint8_t    dataType   : 2;
+            uint8_t    globalInit : 1;
+            uint8_t    pmModeOnly : 1;
+            uint8_t    ops8086    : 1;
+            uint8_t    ops80286   : 1;
+            uint8_t    ops80386   : 1;
+            uint8_t    ops80x87   : 1;
+        };
     };
-    struct {
-        uint8_t    appType    : 3;
-        uint8_t    os2FamExec : 1;
-        uint8_t    executable : 1;
-        uint8_t    linkErrors : 1;
-        uint8_t    _reserved3 : 1;
-        uint8_t    libraryBit : 1;
+    union {
+        uint8_t     appFlags;
+        struct {
+            uint8_t    appType    : 3;
+            uint8_t    os2FamExec : 1;
+            uint8_t    executable : 1;
+            uint8_t    linkErrors : 1;
+            uint8_t    _reserved3 : 1;
+            uint8_t    libraryBit : 1;
+        };
     };
     uint8_t     autoDataSegAddr;
     uint8_t     _reserved4;
@@ -46,12 +52,15 @@ struct exe_ne_header {
     uint16_t    offsetShiftCount;           /* Except for the non-resident names table offset above, which is in bytes, all the other offsets are bit-shifted left, this value is the rhs for the << operator) */
     uint16_t    resourceTableSize;
     uint8_t     targetOS;                   /* defined in enum exe_ne_header_ostypes */
-    struct {
-        uint8_t    os2LFN       : 1;
-        uint8_t    os2PMode     : 1;
-        uint8_t    os2Fonts     : 1;
-        uint8_t    fastLoad     : 1;
-        uint8_t    _reserved5   : 4;
+    union {
+        uint8_t     exeFlags;
+        struct {
+            uint8_t    os2LFN       : 1;
+            uint8_t    os2PMode     : 1;
+            uint8_t    os2Fonts     : 1;
+            uint8_t    fastLoad     : 1;
+            uint8_t    _reserved5   : 4;
+        };
     };
     uint16_t    returnThunksOffset;
     uint16_t    segmentReferenceOffset;
@@ -68,21 +77,36 @@ struct exe_ne_header {
 struct exe_ne_segment {
     uint16_t    segmentOffset;              /* relative to the beginning of file, times 512 bytes. Maybe times ne->offsetShiftCount. */
     uint16_t    segmentSize;                /* if 0, then 65536, unless offset is also 0, then the segment is empty. */
-    struct {
-        uint16_t    segType      : 1;
-        uint16_t    allocated    : 1;
-        uint16_t    loaded       : 1;
-        uint16_t    _reserved1   : 1;
-        uint16_t    relocatable  : 1;
-        uint16_t    shared       : 1;
-        uint16_t    preload      : 1;
-        uint16_t    protection   : 1;
-        uint16_t    relocations  : 1;
-        uint16_t    _reserved2   : 3;
-        uint16_t    discardable  : 1;
-        uint16_t    _reserved3   : 3;
+    union {
+        uint16_t    segmentFlags;
+        struct {
+            uint16_t    segType      : 1;
+            uint16_t    allocated    : 1;
+            uint16_t    loaded       : 1;
+            uint16_t    _reserved1   : 1;
+            uint16_t    relocatable  : 1;
+            uint16_t    shared       : 1;
+            uint16_t    preload      : 1;
+            uint16_t    protection   : 1;
+            uint16_t    relocations  : 1;
+            uint16_t    _reserved2   : 3;
+            uint16_t    discardable  : 1;
+            uint16_t    _reserved3   : 3;
+        };
     };
     uint16_t    minimumAllocation;
+};
+
+/* Not a file format structure per se, just to make it easier to handle */
+struct exe_ne_module {
+    uint8_t     size;
+    char *      name[];
+};
+
+struct exe_ne_export {
+    uint8_t     size;
+    char *      name;
+    uint8_t     ordinal;
 };
 
 enum exe_ne_header_data_typebits {
