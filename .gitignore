@@ -2,3 +2,4 @@
 test
 readexe
 **/*.o
+**/*.exe
