@@ -249,5 +249,4 @@ int main(int argc, char *argv[]) {
     if (mz) free(mz);
     if ((fclose(fd))) err(1, "Cannot close %s", argv[1]);
     return(0);
-
 }
