@@ -33,7 +33,13 @@ struct exe_mz_header {
     uint16_t    stackSegment;
     uint16_t    stackPointer;
     uint16_t    checksum;                   /* Treat the bytes that are supposed to be here as 0x0000 when doing the computation. */
-    uint32_t    initCodeSegIP;              /* aka EntryPoint()/_start() */
+    union {
+        uint32_t    initCodeSegIP;          /* aka EntryPoint()/_start() */
+        struct  {
+            uint16_t    initInstPtr;
+            uint16_t    initCodeSeg;
+        };
+    };
     uint16_t    relocationOffset;           /* 0x40 or more for NE/PE/LE/LX/etc. */
     uint16_t    overlayNumber;              /* 0 for main program */
 };
