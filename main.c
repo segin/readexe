@@ -80,7 +80,6 @@ void read_ne_segments(FILE *fd, const struct exe_ne_header *ne, const char fname
                     ((uint32_t) neseg[i].segmentOffset << ne->offsetShiftCount), 
                     neseg[i].segmentSize ? neseg[i].segmentSize : 0x10000, 
                     neseg[i].segmentSize ? neseg[i].segmentSize : 0x10000);
-
             }
         }
     } else err(1, "Cannot allocate memory");
@@ -90,7 +89,6 @@ void read_ne_segments(FILE *fd, const struct exe_ne_header *ne, const char fname
 
 void read_ne_header(const struct exe_ne_header *ne, const struct exe_mz_new_header *mzx) {
     char *msg;
-    printf("Debug: sizeof(struct exe_ne_header): %lu\n", sizeof(struct exe_ne_header));
     printf("New Executable with magic:\t%c%c\n", ne->magic[0], ne->magic[1]);
     printf("Linker version:\t\t\t%"PRIu8".%"PRIu8"\n", ne->linkerMajor, ne->linkerMinor);
     printf("Entry table offset:\t\t0x%04" PRIx16 " (File offset 0x%08" PRIx32 ")\n", ne->entryTableOffset, ((uint32_t) ne->entryTableOffset + mzx->nextHeader));
@@ -146,14 +144,16 @@ void read_ne_header(const struct exe_ne_header *ne, const struct exe_mz_new_head
     printf("Segment count:\t\t\t0x%04"PRIx16" (%"PRIu16")\n", ne->segmentCount, ne->segmentCount);
     printf("Module reference count:\t\t%04"PRIx16" (%"PRIu16")\n", ne->modRefCount, ne->modRefCount);
     printf("Non-resident name table size:\t0x%04" PRIx16 " (%"PRIu16" bytes)\n ", ne->nonResidentTableSize, ne->nonResidentTableSize);
-        printf("Offset of segment table:\t0x%04" PRIx16 " (File offset 0x%08"PRIx32")\n", ne->segmentTableOffset, (ne->segmentTableOffset << ne->offsetShiftCount));
+    printf("Offset of segment table:\t0x%04" PRIx16 " (File offset 0x%08"PRIx32")\n", ne->segmentTableOffset, (ne->segmentTableOffset << ne->offsetShiftCount));
     printf("Offset of resource table:\t0x%04"PRIx16" (File offset 0x%08"PRIx32")\n", ne->resourceTableOffset, (ne->resourceTableOffset << ne->offsetShiftCount));
     printf("Offset of resident name table:\t0x%04"PRIx16" (File offset 0x%08"PRIx32")\n", ne->residentNamesTableOffset, (ne->residentNamesTableOffset << ne->offsetShiftCount));
     printf("Offset of module table:\t\t0x%04"PRIx16" (File offset 0x%08"PRIx32")\n", ne->modulesTableOffset, (ne->modulesTableOffset << ne->offsetShiftCount));
     printf("Offset of imported names table:\t0x%04"PRIx16" (File offset 0x%08"PRIx32")\n", ne->importedNamesTableOffset, (ne->importedNamesTableOffset << ne->offsetShiftCount));
     printf("Non-resident names table:\t0x%08"PRIx32" (File offset)\n", ne->nonResidentTableOffset);
     printf("Movable entry points:\t\t0x%08"PRIx32" (%"PRIu32")\n", ne->movableEntryPoints, ne->movableEntryPoints);
+    printf("Offset shift count:\t\t0x%04"PRIx16" (%"PRIx16")\n", ne->offsetShiftCount, ne->offsetShiftCount);
     printf("Windows version:\t\t%"PRIu8".%"PRIu8" (0x%04"PRIx16")\n", ne->windowsVersionMajor, ne->windowsVersionMinor, ne->windowsVersion);
+
 }
 
 void read_next_header(FILE *fd, const struct exe_mz_new_header *mzx, const char fname[]) {
@@ -201,7 +201,7 @@ int main(int argc, char *argv[]) {
 #ifdef NEED_ERR
     setprogname(argv[0]);
 #endif
-    printf("sizeof(struct exe_mz_header) = %lu\n", sizeof(struct exe_mz_header));
+    printf("sizeof(struct exe_mz_header) = %u\n", sizeof(struct exe_mz_header));
     if (argc < 2) errx(1, "Not enough arguments.");
     if (!(fd = fopen(argv[1], "rb"))) err(1, "Cannot open %s", argv[1]);
     if (!(mz = malloc(sizeof(struct exe_mz_header)))) err(1, "Cannot allocate memory");
