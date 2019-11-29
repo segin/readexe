@@ -53,17 +53,17 @@ void read_ne_exe(FILE *fd, const struct exe_mz_new_header *mzx, const char fname
 
 void read_ne_segments(FILE *fd, const struct exe_ne_header *ne, const char fname[]) {
     struct exe_ne_segment *neseg;
-    int ret, i;
 
     printf("\n\n");
-    if ((neseg = malloc(sizeof(struct exe_ne_segment) * ne->segmentCount))) { 
+    if ((neseg = malloc(sizeof(struct exe_ne_segment) * ne->segmentCount))) {
+        int ret;
         fseek(fd, (ne->segmentTableOffset << ne->offsetShiftCount), SEEK_SET);
         ret = fread(neseg, 1, (sizeof(struct exe_ne_segment) * ne->segmentCount), fd);
         if (ret != (sizeof(struct exe_ne_segment) * ne->segmentCount)) {
             if ((ret = ferror(fd))) warn("Cannot read %s", fname);
             if ((ret = feof(fd))) warnx("Unexpected end of file: %s", fname);
         } else {
-            for(i = 0; i < ne->segmentCount; i++) {
+            for(int i = 0; i < ne->segmentCount; i++) {
                 printf("Segment %d: %s%s%s%s%s%s%s%s\n", i, 
                     neseg[i].segType ? "CODE " : "DATA ",
                     neseg[i].allocated ? "ALLOCATED " : "",
@@ -152,8 +152,8 @@ void read_ne_header(const struct exe_ne_header *ne, const struct exe_mz_new_head
     printf("Non-resident names table:\t0x%08"PRIx32" (File offset)\n", ne->nonResidentTableOffset);
     printf("Movable entry points:\t\t0x%08"PRIx32" (%"PRIu32")\n", ne->movableEntryPoints, ne->movableEntryPoints);
     printf("Offset shift count:\t\t0x%04"PRIx16" (%"PRIx16")\n", ne->offsetShiftCount, ne->offsetShiftCount);
+    
     printf("Windows version:\t\t%"PRIu8".%"PRIu8" (0x%04"PRIx16")\n", ne->windowsVersionMajor, ne->windowsVersionMinor, ne->windowsVersion);
-
 }
 
 void read_next_header(FILE *fd, const struct exe_mz_new_header *mzx, const char fname[]) {
