@@ -28,6 +28,7 @@
 
 void read_ne_exe(FILE *fd, const struct exe_mz_new_header *mzx, const char fname[]);
 void read_ne_segments(FILE *fd, const struct exe_ne_header *ne, const char fname[]);
+void read_ne_names_import(FILE *fd, const struct nexe_ne_header, const char fname[]);
 void read_next_header(FILE *fd, const struct exe_mz_new_header *mzx, const char fname[]);
 void read_ne_header(const struct exe_ne_header *ne, const struct exe_mz_new_header *mzx);
 int main(int argc, char *argv[]);
