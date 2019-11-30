@@ -5,7 +5,7 @@ LDFLAGS  = -mcmodel=small
 RM		 = rm -f
 BINEXT	 = .exe
 OBJEXT	 = o
-SRC		 = main.c err.c
+SRC		 = readexe.c err.c
 OBJ		 = $(SRC:.c=.$(OBJEXT))
 
 $(PROGNAME)$(BINEXT): $(OBJ)
