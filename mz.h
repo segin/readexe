@@ -35,7 +35,7 @@ struct exe_mz_header {
     uint16_t    checksum;                   /* Treat the bytes that are supposed to be here as 0x0000 when doing the computation. */
     union {
         uint32_t    initCodeSegIP;          /* aka EntryPoint()/_start() */
-        struct  {
+        struct {
             uint16_t    initInstPtr;
             uint16_t    initCodeSeg;
         };
