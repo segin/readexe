@@ -97,7 +97,7 @@ void read_ne_segments(FILE *fd, const struct exe_ne_header *ne, const char fname
 }
 
 void read_ne_names_import(struct THIS *this) {
-
+    printf("Debug: this -> 0x%x\n", (int) this);
 }
 
 void read_ne_header(const struct exe_ne_header *ne, const struct exe_mz_new_header *mzx) {
