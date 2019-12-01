@@ -38,10 +38,10 @@ struct THIS {
 };
 
 void read_ne_exe(struct THIS *this);
-void read_ne_segments(FILE *fd, const struct exe_ne_header *ne, const char fname[]);
+void read_ne_segments(struct THIS *this);
 void read_ne_names_import(struct THIS *this);
 void read_next_header(struct THIS *this);
-void read_ne_header(const struct exe_ne_header *ne, const struct exe_mz_new_header *mzx);
+void read_ne_header(struct THIS *this);
 struct THIS *init_this(void);
 void destroy_this(struct THIS *this);
 int main(int argc, char *argv[]);
@@ -53,46 +53,43 @@ void read_ne_exe(struct THIS *this) {
             if (ferror(this->fd)) warn("Cannot read %s", this->fname);
             if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
         } else {
-            read_ne_header(this->ne, this->mzx);
-            read_ne_segments(this->fd, this->ne, this->fname);
+            read_ne_header(this);
+            read_ne_segments(this);
         }
     } else err(1, "Cannot allocate memory");
     return;
 }
 
-void read_ne_segments(FILE *fd, const struct exe_ne_header *ne, const char fname[]) {
-    struct exe_ne_segment *neseg;
+void read_ne_segments(struct THIS *this) {
 
     printf("\n\n");
-    if ((neseg = (struct exe_ne_segment *) malloc(sizeof(struct exe_ne_segment) * ne->segmentCount))) {
-        int ret;
-        fseek(fd, (ne->segmentTableOffset << ne->offsetShiftCount), SEEK_SET);
-        ret = fread(neseg, 1, (sizeof(struct exe_ne_segment) * ne->segmentCount), fd);
-        if (ret != (sizeof(struct exe_ne_segment) * ne->segmentCount)) {
-            if ((ret = ferror(fd))) warn("Cannot read %s", fname);
-            if ((ret = feof(fd))) warnx("Unexpected end of file: %s", fname);
+    if ((this->nesegs = (struct exe_ne_segment *) malloc(sizeof(struct exe_ne_segment) * this->ne->segmentCount))) {
+        fseek(this->fd, (this->ne->segmentTableOffset << this->ne->offsetShiftCount), SEEK_SET);
+
+        if (fread(this->nesegs, 1, (sizeof(struct exe_ne_segment) * this->ne->segmentCount), this->fd) != (sizeof(struct exe_ne_segment) * this->ne->segmentCount)) {
+            if (ferror(this->fd)) warn("Cannot read %s", this->fname);
+            if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
         } else {
-            for(int i = 0; i < ne->segmentCount; i++) {
+            for(int i = 0; i < this->ne->segmentCount; i++) {
                 printf("Segment %d: %s%s%s%s%s%s%s%s\n", i, 
-                    neseg[i].segType ? "CODE " : "DATA ",
-                    neseg[i].allocated ? "ALLOCATED " : "",
-                    neseg[i].loaded ? "LOADED " : "",
-                    neseg[i].relocatable ? "MOVEABLE " : "",
-                    neseg[i].shared ? "PURE " : "IMPURE ",
-                    neseg[i].preload ? "PRELOAD " : "",
-                    neseg[i].relocations ? "RELOCINFO " : "",
-                    neseg[i].discardable ? "DISCARD " : ""
+                    this->nesegs[i].segType ? "CODE " : "DATA ",
+                    this->nesegs[i].allocated ? "ALLOCATED " : "",
+                    this->nesegs[i].loaded ? "LOADED " : "",
+                    this->nesegs[i].relocatable ? "MOVEABLE " : "",
+                    this->nesegs[i].shared ? "PURE " : "IMPURE ",
+                    this->nesegs[i].preload ? "PRELOAD " : "",
+                    this->nesegs[i].relocations ? "RELOCINFO " : "",
+                    this->nesegs[i].discardable ? "DISCARD " : ""
                 );
                 printf("  Offset      (file)   Length   (dec) \n");
                 printf("  0x%04"PRIx16"  0x%08"PRIx32"   0x%04"PRIx16"   %5"PRIu32"\n\n", 
-                    neseg[i].segmentOffset, 
-                    ((uint32_t) neseg[i].segmentOffset << ne->offsetShiftCount), 
-                    neseg[i].segmentSize ? neseg[i].segmentSize : 0x10000, 
-                    neseg[i].segmentSize ? neseg[i].segmentSize : 0x10000);
+                    this->nesegs[i].segmentOffset, 
+                    ((uint32_t) this->nesegs[i].segmentOffset << this->ne->offsetShiftCount), 
+                    this->nesegs[i].segmentSize ? this->nesegs[i].segmentSize : 0x10000, 
+                    this->nesegs[i].segmentSize ? this->nesegs[i].segmentSize : 0x10000);
             }
         }
     } else err(1, "Cannot allocate memory");
-    if (neseg) free (neseg);
     printf("Debugging method / read_ne_segments() reached.\n");
 }
 
@@ -100,15 +97,15 @@ void read_ne_names_import(struct THIS *this) {
     printf("Debug: this -> 0x%x\n", (int) this);
 }
 
-void read_ne_header(const struct exe_ne_header *ne, const struct exe_mz_new_header *mzx) {
+void read_ne_header(struct THIS *this) {
     char *msg;
-    printf("New Executable with magic:\t%c%c\n", ne->magic[0], ne->magic[1]);
-    printf("Linker version:\t\t\t%"PRIu8".%"PRIu8"\n", ne->linkerMajor, ne->linkerMinor);
-    printf("Entry table offset:\t\t0x%04" PRIx16 " (File offset 0x%08" PRIx32 ")\n", ne->entryTableOffset, ((uint32_t) ne->entryTableOffset + mzx->nextHeader));
-    printf("Entry table size:\t\t0x%04"PRIx16" (%"PRIu16" bytes)\n", ne->entryTableSize, ne->entryTableSize);
-    printf("Header CRC:\t\t\t0x%08"PRIx32"\n", ne->fileCrc);
-    printf(".EXE Flags:\t\t\t0x%02"PRIx8"\n", ne->progFlags);
-    switch(ne->dataType) {
+    printf("New Executable with magic:\t%c%c\n", this->ne->magic[0], this->ne->magic[1]);
+    printf("Linker version:\t\t\t%"PRIu8".%"PRIu8"\n", this->ne->linkerMajor, this->ne->linkerMinor);
+    printf("Entry table offset:\t\t0x%04" PRIx16 " (File offset 0x%08" PRIx32 ")\n", this->ne->entryTableOffset, ((uint32_t) this->ne->entryTableOffset + this->mzx->nextHeader));
+    printf("Entry table size:\t\t0x%04"PRIx16" (%"PRIu16" bytes)\n", this->ne->entryTableSize, this->ne->entryTableSize);
+    printf("Header CRC:\t\t\t0x%08"PRIx32"\n", this->ne->fileCrc);
+    printf(".EXE Flags:\t\t\t0x%02"PRIx8"\n", this->ne->progFlags);
+    switch(this->ne->dataType) {
         case DATA_NONE:
             msg = "Not indicated";
             break;
@@ -123,14 +120,14 @@ void read_ne_header(const struct exe_ne_header *ne, const struct exe_mz_new_head
             break;
     }
     printf(" - Data Segment Model:\t\t%s\n", msg);
-    printf(" - Global initialization:\t%s\n", ne->globalInit ? "true" : "false");
-    printf(" - Protected Mode only:\t\t%s\n", ne->pmModeOnly ? "true" : "false");
-    printf(" - 8086 opcodes used:\t\t%s\n", ne->ops8086 ? "true" : "false");
-    printf(" - 80286 opcodes used:\t\t%s\n", ne->ops80286 ? "true" : "false");
-    printf(" - 80386 opcodes used:\t\t%s\n", ne->ops80386 ? "true" : "false");
-    printf(" - FPU/80x87 opcodes used:\t%s\n", ne->ops80x87 ? "true" : "false");
-    printf("Application flags:\t\t0x%02"PRIx8"\n", ne->appFlags);
-    switch(ne->appType) {
+    printf(" - Global initialization:\t%s\n", this->ne->globalInit ? "true" : "false");
+    printf(" - Protected Mode only:\t\t%s\n", this->ne->pmModeOnly ? "true" : "false");
+    printf(" - 8086 opcodes used:\t\t%s\n", this->ne->ops8086 ? "true" : "false");
+    printf(" - 80286 opcodes used:\t\t%s\n", this->ne->ops80286 ? "true" : "false");
+    printf(" - 80386 opcodes used:\t\t%s\n", this->ne->ops80386 ? "true" : "false");
+    printf(" - FPU/80x87 opcodes used:\t%s\n", this->ne->ops80x87 ? "true" : "false");
+    printf("Application flags:\t\t0x%02"PRIx8"\n", this->ne->appFlags);
+    switch(this->ne->appType) {
         case APP_NONE:
             msg = "Not indicated";
             break;
@@ -145,27 +142,27 @@ void read_ne_header(const struct exe_ne_header *ne, const struct exe_mz_new_head
             break;
     }
     printf(" - Application type:\t\t%s\n", msg);
-    printf(" - OS/2 Family executable:\t%s\n", ne->os2FamExec ? "true" : "false");
-    printf(" - Is executable:\t\t%s\n", ne->executable ? "true" : "false");
-    printf(" - Generated with link errors:\t%s\n", ne->linkErrors ? "true" : "false");
-    printf(" - Is library (DLL or driver):\t%s\n", ne->libraryBit ? "true" : "false");
-    printf("AUTODATA segment address:\t0x%04"PRIx16"\n", ne->autoDataSegAddr);
-    printf("Initial heap size:\t\t0x%04"PRIx16"\n", ne->initHeapSize);
-    printf("Initial stack size:\t\t0x%04"PRIx16"\n", ne->initStackSize);
-    printf("Initial CS:IP (entrypoint):\t%04"PRIx16":%04"PRIx16"\n", (ne->entryPoint >> 16), (ne->entryPoint & 0xFFFF));
-    printf("Initial SS:SP (stack):\t\t%04"PRIx16":%04"PRIx16"\n", (ne->initStackPtr >> 16), (ne->initStackPtr & 0xFFFF));
-    printf("Segment count:\t\t\t0x%04"PRIx16" (%"PRIu16")\n", ne->segmentCount, ne->segmentCount);
-    printf("Module reference count:\t\t%04"PRIx16" (%"PRIu16")\n", ne->modRefCount, ne->modRefCount);
-    printf("Non-resident name table size:\t0x%04"PRIx16" (%"PRIu16" bytes)\n", ne->nonResidentTableSize, ne->nonResidentTableSize);
-    printf("Offset of segment table:\t0x%04"PRIx16" (File offset 0x%08"PRIx32")\n", ne->segmentTableOffset, (ne->segmentTableOffset + mzx->nextHeader));
-    printf("Offset of resource table:\t0x%04"PRIx16" (File offset 0x%08"PRIx32")\n", ne->resourceTableOffset, (ne->resourceTableOffset + mzx->nextHeader));
-    printf("Offset of resident name table:\t0x%04"PRIx16" (File offset 0x%08"PRIx32")\n", ne->residentNamesTableOffset, (ne->residentNamesTableOffset + mzx->nextHeader));
-    printf("Offset of module table:\t\t0x%04"PRIx16" (File offset 0x%08"PRIx32")\n", ne->modulesTableOffset, (ne->modulesTableOffset + mzx->nextHeader));
-    printf("Offset of imported names table:\t0x%04"PRIx16" (File offset 0x%08"PRIx32")\n", ne->importedNamesTableOffset, (ne->importedNamesTableOffset + mzx->nextHeader));
-    printf("Non-resident names table:\t0x%08"PRIx32" (File offset)\n", ne->nonResidentTableOffset);
-    printf("Movable entry points:\t\t0x%08"PRIx32" (%"PRIu32")\n", ne->movableEntryPoints, ne->movableEntryPoints);
-    printf("Offset shift count:\t\t0x%04"PRIx16" (%"PRIx16")\n", ne->offsetShiftCount, ne->offsetShiftCount);
-    printf("Windows version:\t\t%"PRIu8".%"PRIu8" (0x%04"PRIx16")\n", ne->windowsVersionMajor, ne->windowsVersionMinor, ne->windowsVersion);
+    printf(" - OS/2 Family executable:\t%s\n", this->ne->os2FamExec ? "true" : "false");
+    printf(" - Is executable:\t\t%s\n", this->ne->executable ? "true" : "false");
+    printf(" - Generated with link errors:\t%s\n", this->ne->linkErrors ? "true" : "false");
+    printf(" - Is library (DLL or driver):\t%s\n", this->ne->libraryBit ? "true" : "false");
+    printf("AUTODATA segment address:\t0x%04"PRIx16"\n", this->ne->autoDataSegAddr);
+    printf("Initial heap size:\t\t0x%04"PRIx16"\n", this->ne->initHeapSize);
+    printf("Initial stack size:\t\t0x%04"PRIx16"\n", this->ne->initStackSize);
+    printf("Initial CS:IP (entrypoint):\t%04"PRIx16":%04"PRIx16"\n", (this->ne->entryPoint >> 16), (this->ne->entryPoint & 0xFFFF));
+    printf("Initial SS:SP (stack):\t\t%04"PRIx16":%04"PRIx16"\n", (this->ne->initStackPtr >> 16), (this->ne->initStackPtr & 0xFFFF));
+    printf("Segment count:\t\t\t0x%04"PRIx16" (%"PRIu16")\n", this->ne->segmentCount, this->ne->segmentCount);
+    printf("Module reference count:\t\t%04"PRIx16" (%"PRIu16")\n", this->ne->modRefCount, this->ne->modRefCount);
+    printf("Non-resident name table size:\t0x%04"PRIx16" (%"PRIu16" bytes)\n", this->ne->nonResidentTableSize, this->ne->nonResidentTableSize);
+    printf("Offset of segment table:\t0x%04"PRIx16" (File offset 0x%08"PRIx32")\n", this->ne->segmentTableOffset, (this->ne->segmentTableOffset + this->mzx->nextHeader));
+    printf("Offset of resource table:\t0x%04"PRIx16" (File offset 0x%08"PRIx32")\n", this->ne->resourceTableOffset, (this->ne->resourceTableOffset + this->mzx->nextHeader));
+    printf("Offset of resident name table:\t0x%04"PRIx16" (File offset 0x%08"PRIx32")\n", this->ne->residentNamesTableOffset, (this->ne->residentNamesTableOffset + this->mzx->nextHeader));
+    printf("Offset of module table:\t\t0x%04"PRIx16" (File offset 0x%08"PRIx32")\n", this->ne->modulesTableOffset, (this->ne->modulesTableOffset + this->mzx->nextHeader));
+    printf("Offset of imported names table:\t0x%04"PRIx16" (File offset 0x%08"PRIx32")\n", this->ne->importedNamesTableOffset, (this->ne->importedNamesTableOffset + this->mzx->nextHeader));
+    printf("Non-resident names table:\t0x%08"PRIx32" (File offset)\n", this->ne->nonResidentTableOffset);
+    printf("Movable entry points:\t\t0x%08"PRIx32" (%"PRIu32")\n", this->ne->movableEntryPoints, this->ne->movableEntryPoints);
+    printf("Offset shift count:\t\t0x%04"PRIx16" (%"PRIx16")\n", this->ne->offsetShiftCount, this->ne->offsetShiftCount);
+    printf("Windows version:\t\t%"PRIu8".%"PRIu8" (0x%04"PRIx16")\n", this->ne->windowsVersionMajor, this->ne->windowsVersionMinor, this->ne->windowsVersion);
 }
 
 void read_next_header(struct THIS *this) {
@@ -219,7 +216,6 @@ int main(int argc, char *argv[]) {
     const uint32_t mz_page_size = 512;
     const uint32_t mz_paragraph_size = 16;
     struct THIS *this;
-    int ret;
 
 #ifdef NEED_ERR
     setprogname(argv[0]);
@@ -229,10 +225,9 @@ int main(int argc, char *argv[]) {
     this->fname = argv[1];
     if (!(this->fd = fopen(this->fname, "rb"))) err(1, "Cannot open %s", this->fname);
     if (!(this->mz = malloc(sizeof(struct exe_mz_header)))) err(1, "Cannot allocate memory");
-    ret = fread(this->mz, 1, sizeof(struct exe_mz_header), this->fd);
-    if (ret != sizeof(struct exe_mz_header)) {
-        if ((ret = ferror(this->fd))) warn("Cannot read %s", this->fname);
-        if ((ret = feof(this->fd))) warnx("Unexpected end of file: %s", this->fname);
+    if (fread(this->mz, 1, sizeof(struct exe_mz_header), this->fd) != sizeof(struct exe_mz_header)) {
+        if (ferror(this->fd)) warn("Cannot read %s", this->fname);
+        if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
     } else {
         if (    ((this->mz->magic[0] == 'M') && (this->mz->magic[1] == 'Z')) 
             ||  ((this->mz->magic[1] == 'M') && (this->mz->magic[0] == 'Z')) ) {
@@ -256,10 +251,9 @@ int main(int argc, char *argv[]) {
                 /* check for next header */
                 if(this->mz->relocationOffset >= 0x40) {
                     if (!(this->mzx = malloc(sizeof(struct exe_mz_new_header)))) err(1, "Cannot allocate memory");
-                    ret = fread(this->mzx, 1, sizeof(struct exe_mz_new_header), this->fd);
-                    if (ret != sizeof(struct exe_mz_new_header)) {
-                        if ((ret = ferror(this->fd))) warn("Cannot read %s", this->fname);
-                        if ((ret = feof(this->fd))) warnx("Unexpected end of file: %s", this->fname);
+                    if (fread(this->mzx, 1, sizeof(struct exe_mz_new_header), this->fd) != sizeof(struct exe_mz_new_header)) {
+                        if (ferror(this->fd)) warn("Cannot read %s", this->fname);
+                        if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
                     } else {
                         printf("Offset to NE/PE header:\t\t0x%08"PRIx32"\n", this->mzx->nextHeader);
                         read_next_header(this);
