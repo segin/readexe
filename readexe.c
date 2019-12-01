@@ -61,7 +61,6 @@ void read_ne_exe(struct THIS *this) {
 }
 
 void read_ne_segments(struct THIS *this) {
-
     printf("\n\n");
     if ((this->nesegs = (struct exe_ne_segment *) malloc(sizeof(struct exe_ne_segment) * this->ne->segmentCount))) {
         fseek(this->fd, (this->ne->segmentTableOffset << this->ne->offsetShiftCount), SEEK_SET);
@@ -199,6 +198,7 @@ void read_next_header(struct THIS *this) {
 
 struct THIS *init_this(void) {
     struct THIS *this;
+
     if (!(this = malloc(sizeof(struct THIS)))) err(1, "Cannot allocate memory");
     memset(this, 0, sizeof(struct THIS));
     return this;
@@ -231,39 +231,38 @@ int main(int argc, char *argv[]) {
     } else {
         if (    ((this->mz->magic[0] == 'M') && (this->mz->magic[1] == 'Z')) 
             ||  ((this->mz->magic[1] == 'M') && (this->mz->magic[0] == 'Z')) ) {
-                printf("%s:\n", argv[1]);
-                printf("DOS executable with magic:\t%c%c\n", this->mz->magic[0], this->mz->magic[1]);
-                printf("Number of executable pages:\t0x%04"PRIx16" (%"PRIu32"+ bytes)\n", this->mz->pageCount, ((this->mz->pageCount - 1) * mz_page_size));
-                printf("Size of final page:\t\t%"PRIu16" bytes\n", this->mz->lastPageSize);
-                printf("Total code size:\t\t0x%08"PRIx32" (%"PRIu32" bytes)\n",
-                    (((this->mz->pageCount - 1) * mz_page_size) + this->mz->lastPageSize),
-                    (((this->mz->pageCount - 1) * mz_page_size) + this->mz->lastPageSize));
-                printf("Total relocation entries:\t0x%04"PRIx16"\n", this->mz->relocationEntries);
-                printf("Header size in paragraphs:\t0x%04"PRIx16" (%"PRIu32" bytes)\n", this->mz->hdrSize, (this->mz->hdrSize * mz_paragraph_size));
-                printf("Minimum memory in paragraphs:\t0x%04"PRIx16" (%"PRIu32" bytes)\n", this->mz->minMemory, (this->mz->minMemory * mz_paragraph_size));
-                printf("Maximum memory in paragraphs:\t0x%04"PRIx16" (%"PRIu32" bytes)\n", this->mz->maxMemory, (this->mz->maxMemory * mz_paragraph_size));
-                printf("Initial stack segment:\t\t0x%04"PRIx16"\n", this->mz->stackSegment);
-                printf("Initial stack pointer:\t\t0x%04"PRIx16"\n", this->mz->stackPointer);
-                printf("Checksum:\t\t\t0x%04"PRIx16"\n", this->mz->checksum);
-                printf("Initial CS:IP far pointer:\t%04"PRIx16":%04"PRIx16"\n", this->mz->initCodeSeg, this->mz->initInstPtr);
-                printf("Relocation table offset:\t0x%04"PRIx16"\n", this->mz->relocationOffset);
-                printf("Overlay:\t\t\t0x%04"PRIx16"\n", this->mz->overlayNumber);
-                /* check for next header */
-                if(this->mz->relocationOffset >= 0x40) {
-                    if (!(this->mzx = malloc(sizeof(struct exe_mz_new_header)))) err(1, "Cannot allocate memory");
-                    if (fread(this->mzx, 1, sizeof(struct exe_mz_new_header), this->fd) != sizeof(struct exe_mz_new_header)) {
-                        if (ferror(this->fd)) warn("Cannot read %s", this->fname);
-                        if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
-                    } else {
-                        printf("Offset to NE/PE header:\t\t0x%08"PRIx32"\n", this->mzx->nextHeader);
-                        read_next_header(this);
-                    }
+            printf("%s:\n", argv[1]);
+            printf("DOS executable with magic:\t%c%c\n", this->mz->magic[0], this->mz->magic[1]);
+            printf("Number of executable pages:\t0x%04"PRIx16" (%"PRIu32"+ bytes)\n", this->mz->pageCount, ((this->mz->pageCount - 1) * mz_page_size));
+            printf("Size of final page:\t\t%"PRIu16" bytes\n", this->mz->lastPageSize);
+            printf("Total code size:\t\t0x%08"PRIx32" (%"PRIu32" bytes)\n",
+                (((this->mz->pageCount - 1) * mz_page_size) + this->mz->lastPageSize),
+                (((this->mz->pageCount - 1) * mz_page_size) + this->mz->lastPageSize));
+            printf("Total relocation entries:\t0x%04"PRIx16"\n", this->mz->relocationEntries);
+            printf("Header size in paragraphs:\t0x%04"PRIx16" (%"PRIu32" bytes)\n", this->mz->hdrSize, (this->mz->hdrSize * mz_paragraph_size));
+            printf("Minimum memory in paragraphs:\t0x%04"PRIx16" (%"PRIu32" bytes)\n", this->mz->minMemory, (this->mz->minMemory * mz_paragraph_size));
+            printf("Maximum memory in paragraphs:\t0x%04"PRIx16" (%"PRIu32" bytes)\n", this->mz->maxMemory, (this->mz->maxMemory * mz_paragraph_size));
+            printf("Initial stack segment:\t\t0x%04"PRIx16"\n", this->mz->stackSegment);
+            printf("Initial stack pointer:\t\t0x%04"PRIx16"\n", this->mz->stackPointer);
+            printf("Checksum:\t\t\t0x%04"PRIx16"\n", this->mz->checksum);
+            printf("Initial CS:IP far pointer:\t%04"PRIx16":%04"PRIx16"\n", this->mz->initCodeSeg, this->mz->initInstPtr);
+            printf("Relocation table offset:\t0x%04"PRIx16"\n", this->mz->relocationOffset);
+            printf("Overlay:\t\t\t0x%04"PRIx16"\n", this->mz->overlayNumber);
+            /* check for next header */
+            if(this->mz->relocationOffset >= 0x40) {
+                if (!(this->mzx = malloc(sizeof(struct exe_mz_new_header)))) err(1, "Cannot allocate memory");
+                if (fread(this->mzx, 1, sizeof(struct exe_mz_new_header), this->fd) != sizeof(struct exe_mz_new_header)) {
+                    if (ferror(this->fd)) warn("Cannot read %s", this->fname);
+                    if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
+                } else {
+                    printf("Offset to NE/PE header:\t\t0x%08"PRIx32"\n", this->mzx->nextHeader);
+                    read_next_header(this);
                 }
+            }
         } else {
             fprintf(stdout, "Not a DOS/MZ executable: %s\n", this->fname);
         }
     }
-
     destroy_this(this);
     return(0);
 }
