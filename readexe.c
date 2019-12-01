@@ -161,8 +161,34 @@ void read_ne_header(struct THIS *this) {
     printf("Non-resident names table:\t0x%08"PRIx32" (File offset)\n", this->ne->nonResidentTableOffset);
     printf("Movable entry points:\t\t0x%08"PRIx32" (%"PRIu32")\n", this->ne->movableEntryPoints, this->ne->movableEntryPoints);
     printf("Offset shift count:\t\t0x%04"PRIx16" (%"PRIu16")\n", this->ne->offsetShiftCount, this->ne->offsetShiftCount);
-    printf("Resource table size:\t\t0x%"PRIx16" (%"PRIu16")\n", this->ne->offsetShiftCount, this->ne->offsetShiftCount);
-    
+    printf("Resource table size:\t\t0x%04"PRIx16" (%"PRIu16")\n", this->ne->offsetShiftCount, this->ne->offsetShiftCount);
+    switch(this->ne->targetOS) {
+        case OS_UNKNOWN:
+            msg = "Unknown";
+            break;
+        case OS_OS2:
+            msg = "OS/2";
+            break;
+        case OS_WINDOWS:
+            msg = "Windows";
+            break;
+        case OS_MSDOS:
+            msg = "MS-DOS 4.00 (Europe)";
+            break;
+        case OS_WIN386:
+            msg = "Windows/386";
+            break;
+        case OS_BOSS:
+            msg = "Borland Operating System Services";
+            break;
+        case OS_PHARLAP286OS2:
+            msg = "Phar Lap 286|DOS-Extender (OS/2)";
+            break;
+        case OS_PHARLAP286WIN:
+            msg = "Phar Lap 286|DOS-Extender (Windows)";
+            break;
+    }
+    printf("Target operating system:\t%s (0x%02"PRIx8")\n", msg, this->ne->targetOS);
     printf("Windows version:\t\t%"PRIu8".%"PRIu8" (0x%04"PRIx16")\n", this->ne->windowsVersionMajor, this->ne->windowsVersionMinor, this->ne->windowsVersion);
 }
 
