@@ -160,7 +160,9 @@ void read_ne_header(struct THIS *this) {
     printf("Offset of imported names table:\t0x%04"PRIx16" (File offset 0x%08"PRIx32")\n", this->ne->importedNamesTableOffset, (this->ne->importedNamesTableOffset + this->mzx->nextHeader));
     printf("Non-resident names table:\t0x%08"PRIx32" (File offset)\n", this->ne->nonResidentTableOffset);
     printf("Movable entry points:\t\t0x%08"PRIx32" (%"PRIu32")\n", this->ne->movableEntryPoints, this->ne->movableEntryPoints);
-    printf("Offset shift count:\t\t0x%04"PRIx16" (%"PRIx16")\n", this->ne->offsetShiftCount, this->ne->offsetShiftCount);
+    printf("Offset shift count:\t\t0x%04"PRIx16" (%"PRIu16")\n", this->ne->offsetShiftCount, this->ne->offsetShiftCount);
+    printf("Resource table size:\t\t0x%"PRIx16" (%"PRIu16")\n", this->ne->offsetShiftCount, this->ne->offsetShiftCount);
+    
     printf("Windows version:\t\t%"PRIu8".%"PRIu8" (0x%04"PRIx16")\n", this->ne->windowsVersionMajor, this->ne->windowsVersionMinor, this->ne->windowsVersion);
 }
 
