@@ -28,7 +28,7 @@
 
 void read_ne_exe(FILE *fd, const struct exe_mz_new_header *mzx, const char fname[]);
 void read_ne_segments(FILE *fd, const struct exe_ne_header *ne, const char fname[]);
-void read_ne_names_import(FILE *fd, const struct nexe_ne_header, const char fname[]);
+void read_ne_names_import(FILE *fd, const struct exe_ne_header *ne, const char fname[]);
 void read_next_header(FILE *fd, const struct exe_mz_new_header *mzx, const char fname[]);
 void read_ne_header(const struct exe_ne_header *ne, const struct exe_mz_new_header *mzx);
 int main(int argc, char *argv[]);
@@ -88,6 +88,11 @@ void read_ne_segments(FILE *fd, const struct exe_ne_header *ne, const char fname
     printf("Debugging method / read_ne_segments() reached.\n");
 }
 
+void read_ne_names_import(FILE *fd, const struct exe_ne_header *ne, const char fname[]) {
+
+}
+
+
 void read_ne_header(const struct exe_ne_header *ne, const struct exe_mz_new_header *mzx) {
     char *msg;
     printf("New Executable with magic:\t%c%c\n", ne->magic[0], ne->magic[1]);
@@ -144,7 +149,7 @@ void read_ne_header(const struct exe_ne_header *ne, const struct exe_mz_new_head
     printf("Initial SS:SP (stack):\t\t%04"PRIx16":%04"PRIx16"\n", (ne->initStackPtr >> 16), (ne->initStackPtr & 0xFFFF));
     printf("Segment count:\t\t\t0x%04"PRIx16" (%"PRIu16")\n", ne->segmentCount, ne->segmentCount);
     printf("Module reference count:\t\t%04"PRIx16" (%"PRIu16")\n", ne->modRefCount, ne->modRefCount);
-    printf("Non-resident name table size:\t0x%04" PRIx16 " (%"PRIu16" bytes)\n ", ne->nonResidentTableSize, ne->nonResidentTableSize);
+    printf("Non-resident name table size:\t0x%04" PRIx16 " (%"PRIu16" bytes)\n", ne->nonResidentTableSize, ne->nonResidentTableSize);
     printf("Offset of segment table:\t0x%04" PRIx16 " (File offset 0x%08"PRIx32")\n", ne->segmentTableOffset, (ne->segmentTableOffset << ne->offsetShiftCount));
     printf("Offset of resource table:\t0x%04"PRIx16" (File offset 0x%08"PRIx32")\n", ne->resourceTableOffset, (ne->resourceTableOffset << ne->offsetShiftCount));
     printf("Offset of resident name table:\t0x%04"PRIx16" (File offset 0x%08"PRIx32")\n", ne->residentNamesTableOffset, (ne->residentNamesTableOffset << ne->offsetShiftCount));
@@ -153,7 +158,6 @@ void read_ne_header(const struct exe_ne_header *ne, const struct exe_mz_new_head
     printf("Non-resident names table:\t0x%08"PRIx32" (File offset)\n", ne->nonResidentTableOffset);
     printf("Movable entry points:\t\t0x%08"PRIx32" (%"PRIu32")\n", ne->movableEntryPoints, ne->movableEntryPoints);
     printf("Offset shift count:\t\t0x%04"PRIx16" (%"PRIx16")\n", ne->offsetShiftCount, ne->offsetShiftCount);
-    
     printf("Windows version:\t\t%"PRIu8".%"PRIu8" (0x%04"PRIx16")\n", ne->windowsVersionMajor, ne->windowsVersionMinor, ne->windowsVersion);
 }
 
