@@ -1,6 +1,6 @@
 PROGNAME = readexe
 CC		 = clang 
-CFLAGS	 = -march=native -ggdb3
+CFLAGS	 = -march=native -ggdb3 -Wall -Wextra
 LDFLAGS  = 
 RM		 = rm -f
 BINEXT	 =
