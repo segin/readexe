@@ -18,6 +18,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <inttypes.h>
 #include <err.h> /* -I. or such for platforms without err.h */
 
@@ -36,29 +37,26 @@ struct THIS {
     struct exe_ne_segment *nesegs;
 };
 
-void read_ne_exe(FILE *fd, const struct exe_mz_new_header *mzx, const char fname[]);
+void read_ne_exe(struct THIS *this);
 void read_ne_segments(FILE *fd, const struct exe_ne_header *ne, const char fname[]);
-void read_ne_names_import(FILE *fd, const struct exe_ne_header *ne, const char fname[]);
-void read_next_header(FILE *fd, const struct exe_mz_new_header *mzx, const char fname[]);
+void read_ne_names_import(struct THIS *this);
+void read_next_header(struct THIS *this);
 void read_ne_header(const struct exe_ne_header *ne, const struct exe_mz_new_header *mzx);
+struct THIS *init_this(void);
+void destroy_this(struct THIS *this);
 int main(int argc, char *argv[]);
 
-void read_ne_exe(FILE *fd, const struct exe_mz_new_header *mzx, const char fname[]) {
-    struct exe_ne_header *ne;
-    int ret;
-
-    if ((ne = malloc(sizeof(struct exe_ne_header)))) { 
-        fseek(fd, mzx->nextHeader, SEEK_SET);
-        ret = fread(ne, 1, sizeof(struct exe_ne_header), fd);
-        if (ret != sizeof(struct exe_ne_header)) {
-            if ((ret = ferror(fd))) warn("Cannot read %s", fname);
-            if ((ret = feof(fd))) warnx("Unexpected end of file: %s", fname);
+void read_ne_exe(struct THIS *this) {
+    if ((this->ne = (struct exe_ne_header *) malloc(sizeof(struct exe_ne_header)))) { 
+        fseek(this->fd, this->mzx->nextHeader, SEEK_SET);
+        if (fread(this->ne, 1, sizeof(struct exe_ne_header), this->fd)!= sizeof(struct exe_ne_header)) {
+            if (ferror(this->fd)) warn("Cannot read %s", this->fname);
+            if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
         } else {
-            read_ne_header(ne, mzx);
-            read_ne_segments(fd, ne, fname);
+            read_ne_header(this->ne, this->mzx);
+            read_ne_segments(this->fd, this->ne, this->fname);
         }
     } else err(1, "Cannot allocate memory");
-    if (ne) free (ne);
     return;
 }
 
@@ -66,7 +64,7 @@ void read_ne_segments(FILE *fd, const struct exe_ne_header *ne, const char fname
     struct exe_ne_segment *neseg;
 
     printf("\n\n");
-    if ((neseg = malloc(sizeof(struct exe_ne_segment) * ne->segmentCount))) {
+    if ((neseg = (struct exe_ne_segment *) malloc(sizeof(struct exe_ne_segment) * ne->segmentCount))) {
         int ret;
         fseek(fd, (ne->segmentTableOffset << ne->offsetShiftCount), SEEK_SET);
         ret = fread(neseg, 1, (sizeof(struct exe_ne_segment) * ne->segmentCount), fd);
@@ -98,10 +96,9 @@ void read_ne_segments(FILE *fd, const struct exe_ne_header *ne, const char fname
     printf("Debugging method / read_ne_segments() reached.\n");
 }
 
-void read_ne_names_import(FILE *fd, const struct exe_ne_header *ne, const char fname[]) {
+void read_ne_names_import(struct THIS *this) {
 
 }
-
 
 void read_ne_header(const struct exe_ne_header *ne, const struct exe_mz_new_header *mzx) {
     char *msg;
@@ -171,31 +168,29 @@ void read_ne_header(const struct exe_ne_header *ne, const struct exe_mz_new_head
     printf("Windows version:\t\t%"PRIu8".%"PRIu8" (0x%04"PRIx16")\n", ne->windowsVersionMajor, ne->windowsVersionMinor, ne->windowsVersion);
 }
 
-void read_next_header(FILE *fd, const struct exe_mz_new_header *mzx, const char fname[]) {
+void read_next_header(struct THIS *this) {
     char next_magic[2];
-    int ret;
 
-    if((ret = fseek(fd, mzx->nextHeader, SEEK_SET))) {
-        if ((ret = ferror(fd))) warn("Cannot read %s", fname);
-        if ((ret = feof(fd))) warnx("Unexpected end of file: %s", fname);
+    if(fseek(this->fd, this->mzx->nextHeader, SEEK_SET)) {
+        if (ferror(this->fd)) warn("Cannot read %s", this->fname);
+        if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
     } else {
-        ret = fread(&next_magic, 1, sizeof(next_magic), fd);
-        if (ret != sizeof(next_magic)) {
-            if ((ret = ferror(fd))) warn("Cannot read %s", fname);
-            if ((ret = feof(fd))) warnx("Unexpected end of file: %s", fname);
+        if (fread(&next_magic, 1, sizeof(next_magic), this->fd) != sizeof(next_magic)) {
+            if (ferror(this->fd)) warn("Cannot read %s", this->fname);
+            if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
         } else {
             if (((next_magic[0] == 'N') && (next_magic[1] == 'E'))) {
                 printf("\n\n");
-                printf("New Executable header found at offset 0x%08"PRIx32"\n", mzx->nextHeader);
-                read_ne_exe(fd, mzx, fname);
+                printf("New Executable header found at offset 0x%08"PRIx32"\n", this->mzx->nextHeader);
+                read_ne_exe(this);
             } else if (((next_magic[0] == 'P') && (next_magic[1] == 'E'))) {
                 printf("\n\n");
-                printf("Portable Executable header found at offset 0x%08"PRIx32"\n", mzx->nextHeader);
+                printf("Portable Executable header found at offset 0x%08"PRIx32"\n", this->mzx->nextHeader);
                 // read_pe_exe(fd, mzx, fname);
             } else if (((next_magic[0] == 'L') && (next_magic[1] == 'E')) ||
                        ((next_magic[0] == 'L') && (next_magic[1] == 'X'))) {
                 printf("\n\n");
-                printf("Linear Executable header found at offset 0x%08"PRIx32"\n", mzx->nextHeader);
+                printf("Linear Executable header found at offset 0x%08"PRIx32"\n", this->mzx->nextHeader);
                 // read_le_exe(fd, mzx, fname);
             } else {
                 printf("\n\n");
@@ -203,6 +198,21 @@ void read_next_header(FILE *fd, const struct exe_mz_new_header *mzx, const char 
             }
         }
     }
+}
+
+struct THIS *init_this(void) {
+    struct THIS *this;
+    if (!(this = malloc(sizeof(struct THIS)))) err(1, "Cannot allocate memory");
+    memset(this, 0, sizeof(struct THIS));
+    return this;
+}
+
+void destroy_this(struct THIS *this) {
+    if (this->nesegs) free(this->nesegs);
+    if (this->ne) free(this->ne);
+    if (this->mzx) free(this->mzx);
+    if (this->mz) free(this->mz);
+    if ((fclose(this->fd))) err(1, "Cannot close %s", this->fname);
 }
 
 int main(int argc, char *argv[]) {
@@ -214,8 +224,7 @@ int main(int argc, char *argv[]) {
 #ifdef NEED_ERR
     setprogname(argv[0]);
 #endif
-
-    if (!(this = malloc(sizeof(struct THIS)))) err(1, "Cannot allocate memory");
+    this = init_this();
     if (argc < 2) errx(1, "Not enough arguments.");
     this->fname = argv[1];
     if (!(this->fd = fopen(this->fname, "rb"))) err(1, "Cannot open %s", this->fname);
@@ -253,16 +262,14 @@ int main(int argc, char *argv[]) {
                         if ((ret = feof(this->fd))) warnx("Unexpected end of file: %s", this->fname);
                     } else {
                         printf("Offset to NE/PE header:\t\t0x%08"PRIx32"\n", this->mzx->nextHeader);
-                        read_next_header(this->fd, this->mzx, this->fname);
+                        read_next_header(this);
                     }
                 }
         } else {
             fprintf(stdout, "Not a DOS/MZ executable: %s\n", this->fname);
         }
     }
-    if (this->mzx) free(this->mzx);
-    if (this->mz) free(this->mz);
-    if ((fclose(this->fd))) err(1, "Cannot close %s", this->fname);
-    free(this);
+
+    destroy_this(this);
     return(0);
 }
