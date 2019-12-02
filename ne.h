@@ -115,9 +115,15 @@ struct exe_ne_segment {
 };
 
 /* Not a file format structure per se, just to make it easier to handle */
-struct exe_ne_module {
+struct exe_ne_module { 
     uint8_t     size;
-    char *      name[];
+    uint16_t    *offsets;
+};
+
+struct exe_ne_import {
+    uint8_t     size;
+    int         offset;     /* For resolving module name table offsets */
+    char *      name;
 };
 
 struct exe_ne_export {
