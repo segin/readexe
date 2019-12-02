@@ -90,7 +90,7 @@ warnx(const char *format, ...)
 	va_end(ap);
 }
 
-void
+noreturn void
 err(int status, const char *format, ...)
 {
 	va_list ap;
@@ -110,7 +110,7 @@ verrx(int eval, const char *format, va_list ap)
 	exit(eval);
 }
 
-void
+noreturn void
 errx(int eval, const char *format, ...)
 {
 	va_list ap;
