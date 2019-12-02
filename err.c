@@ -34,6 +34,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdnoreturn.h>
 
 char *__progname;
 
@@ -48,7 +49,7 @@ vwarnc(int code, const char *format, va_list ap)
 	fprintf(stderr, "%s\n", strerror(code));
 }
 
-void
+noreturn void
 verrc(int status, int code, const char *format, va_list ap)
 {
 	fprintf(stderr, "%s: ", getprogname());
@@ -99,7 +100,7 @@ err(int status, const char *format, ...)
 	va_end(ap);
 }
 
-void
+noreturn void
 verrx(int eval, const char *format, va_list ap)
 {
 	fprintf(stderr, "%s: ", getprogname());

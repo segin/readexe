@@ -29,12 +29,14 @@
 #include "le.h"
 
 struct THIS {
-    FILE *fd;
-    char *fname; 
-    struct exe_mz_header *mz;
-    struct exe_mz_new_header *mzx;
-    struct exe_ne_header *ne;
-    struct exe_ne_segment *nesegs;
+    FILE *fd;                               /* standard I/O library file descriptor */
+    char *fname;                            /* File name of the executable we're inspecting, passed as the sole argument. */
+    struct exe_mz_header *mz;               /* DOS (MZ) header */
+    struct exe_mz_new_header *mzx;          /* eXtended DOS (MZ) header */
+    struct exe_ne_header *ne;               /* New Executable (NE) header */
+    struct exe_ne_segment *nesegs;          /* NE segments */
+    int ne_importCount;                     /* number of entries in NE imported names table  */
+    struct exe_ne_module *nemods;           /* NE imported modules */
 };
 
 void read_ne_exe(struct THIS *this);
