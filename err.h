@@ -24,10 +24,6 @@
 
 #define NEED_ERR
 
-#ifdef _MSDOS
-#define noreturn
-#endif
-
 extern char *__progname;
 
 void vwarnc(int code, const char *format, va_list ap);
