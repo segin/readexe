@@ -2,6 +2,8 @@
 
 `readexe` is a command-line tool for inspecting various Microsoft PC EXE formats.
 
+Travis CI status: [![Build Status](https://travis-ci.com/segin/readexe.svg?branch=master)](https://travis-ci.com/segin/readexe)
+
 ## File types supported
 
 |Status|Magic|Type|
