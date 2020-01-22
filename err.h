@@ -22,9 +22,13 @@
 #ifndef ERR_H
 #define ERR_H
 
-#define NEED_ERR
+#ifndef HAVE_SETPROGNAME
+#define NEED_PROGNAME
+#endif
 
+#ifdef NEED_PROGNAME
 extern char *__progname;
+#endif 
 
 void vwarnc(int code, const char *format, va_list ap);
 noreturn void verrc(int status, int code, const char *format, va_list ap);
@@ -34,7 +38,9 @@ void warnx(const char *format, ...);
 void err(int status, const char *format, ...);
 noreturn void verrx(int eval, const char *format, va_list ap);
 void errx(int eval, const char *format, ...);
+
+#ifdef NEED_PROGNAME
 void setprogname(char *progname);
 const char *getprogname(void);
-
+#endif
 #endif 
