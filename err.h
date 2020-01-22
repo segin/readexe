@@ -18,9 +18,15 @@
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdnoreturn.h>
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 
 #ifndef ERR_H
 #define ERR_H
+
+#undef NEED_PROGNAME
 
 #ifndef HAVE_SETPROGNAME
 #define NEED_PROGNAME
@@ -42,5 +48,5 @@ void errx(int eval, const char *format, ...);
 #ifdef NEED_PROGNAME
 void setprogname(char *progname);
 const char *getprogname(void);
-#endif
-#endif 
+#endif /* NEED_PROGNAME */
+#endif /* ERR_H */

@@ -36,7 +36,9 @@
 #include <stdio.h>
 #include <stdnoreturn.h>
 
+#ifdef NEED_PROGNAME
 char *__progname;
+#endif
 
 void
 vwarnc(int code, const char *format, va_list ap)
@@ -120,6 +122,7 @@ errx(int eval, const char *format, ...)
 	va_end(ap);
 }
 
+#ifdef NEED_PROGNAME
 void setprogname(char *progname) {
     __progname = progname;
 }
@@ -127,3 +130,5 @@ void setprogname(char *progname) {
 const char *getprogname(void) {
     return __progname;
 }
+#endif
+
