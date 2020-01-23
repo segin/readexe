@@ -36,6 +36,7 @@ struct THIS {
     struct exe_ne_header *ne;               /* New Executable (NE) header */
     struct exe_ne_segment *nesegs;          /* NE segments */
     int ne_importCount;                     /* number of entries in NE imported names table  */
+    int ne_moduleCount;                     /* number of module references in modules table */
     struct exe_ne_module *nemods;           /* NE imported modules */
 };
 
@@ -44,6 +45,8 @@ void read_ne_segments(struct THIS *this);
 void read_ne_names_import(struct THIS *this);
 void read_next_header(struct THIS *this);
 void read_ne_header(struct THIS *this);
+void get_ne_modules_count(struct THIS *this);
+
 struct THIS *init_this(void);
 void destroy_this(struct THIS *this);
 int main(int argc, char *argv[]);
@@ -57,6 +60,8 @@ void read_ne_exe(struct THIS *this) {
         } else {
             read_ne_header(this);
             read_ne_segments(this);
+            get_ne_modules_count(this);
+            printf("Modules count: %u\n", this->ne_moduleCount);
         }
     } else err(1, "Cannot allocate memory");
     return;
@@ -92,6 +97,21 @@ void read_ne_segments(struct THIS *this) {
         }
     } else err(1, "Cannot allocate memory");
     printf("Debugging method / read_ne_segments() reached.\n");
+}
+
+void get_ne_modules_count(struct THIS *this) {
+    uint16_t tmp;
+
+    this->ne_moduleCount = 0;
+    fseek(this->fd, (this->ne->modulesTableOffset + this->mzx->nextHeader), SEEK_SET);
+    do { 
+        fread(&tmp, 2, 1, this->fd); 
+        if (tmp) this->ne_moduleCount++;
+    } while (tmp);
+}
+
+void get_ne_names_import_count(struct THIS *this) {
+    
 }
 
 void read_ne_names_import(struct THIS *this) {
