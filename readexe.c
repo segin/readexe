@@ -22,6 +22,10 @@
 #include <inttypes.h>
 #include <err.h> /* -I. or such for platforms without err.h */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 /* Big assumptions on little-endianiness here */
 
 #include "mz.h"
