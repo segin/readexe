@@ -6,3 +6,16 @@ readexe
 **/*.S
 aclocal.m4
 Makefile.in
+compile
+config.h
+config.h.in
+config.log
+config.status
+configure
+depcomp
+install-sh
+Makefile
+missing
+stamp-h1
+.deps
+autom4te.cache
