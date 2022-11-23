@@ -114,6 +114,12 @@ struct exe_ne_segment {
     uint16_t    minimumAllocation;
 };
 
+struct exe_ne_resource_infoblock {
+    uint16_t    typeID; /* integer if high bit set, string offset otherwise. */
+    uint16_t    count;
+    uint32_t    _reserved;
+};
+
 /* Not a file format structure per se, just to make it easier to handle */
 struct exe_ne_module { 
     uint8_t     size;
