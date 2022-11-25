@@ -119,7 +119,7 @@ void get_ne_names_import_count(struct THIS *this) {
 }
 
 void read_ne_names_import(struct THIS *this) {
-    printf("Debug: this -> 0x%x\n", (int) this);
+    printf("Debug: this -> 0x%x\n", this);
 }
 
 void read_ne_header(struct THIS *this) {
