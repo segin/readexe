@@ -216,10 +216,10 @@ void read_ne_header(struct THIS *this) {
     }
     printf("Target operating system:\t%s (0x%02"PRIx8")\n", msg, this->ne->targetOS);
     printf("Executable flags: %s%s%s%s\n", 
-        this->ne->os2LFN ? "LONGFILENAME" : "",
-        this->ne->os2PMode ? "PROTECTEDMODE" : "",
-        this->ne->os2Fonts ? "PROPORTIONALFONTS" : "",
-        this->ne->fastLoad ? "GANGLOADAREA" : ""); 
+        this->ne->os2LFN ? "LONGFILENAME " : "",
+        this->ne->os2PMode ? "PROTECTEDMODE " : "",
+        this->ne->os2Fonts ? "PROPORTIONALFONTS " : "",
+        this->ne->fastLoad ? "GANGLOADAREA " : ""); 
     printf("Windows version:\t\t%"PRIu8".%"PRIu8" (0x%04"PRIx16")\n", this->ne->windowsVersionMajor, this->ne->windowsVersionMinor, this->ne->windowsVersion);
 }
 
