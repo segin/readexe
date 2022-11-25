@@ -54,12 +54,7 @@ vwarnc(int code, const char *format, va_list ap)
 noreturn void
 verrc(int status, int code, const char *format, va_list ap)
 {
-	fprintf(stderr, "%s: ", getprogname());
-	if (format) {
-		vfprintf(stderr, format, ap);
-		fprintf(stderr, ": ");
-	}
-	fprintf(stderr, "%s\n", strerror(code));
+	vwarnc(code, format, ap);
 	exit(status);
 }
 
