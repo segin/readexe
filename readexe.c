@@ -74,7 +74,7 @@ void read_ne_exe(struct THIS *this) {
 void read_ne_segments(struct THIS *this) {
     printf("\n\n");
     if ((this->nesegs = (struct exe_ne_segment *) malloc(sizeof(struct exe_ne_segment) * this->ne->segmentCount))) {
-        fseek(this->fd, this->mzx->nextHeader + (this->ne->segmentTableOffset << this->ne->offsetShiftCount), SEEK_SET);
+        fseek(this->fd, this->mzx->nextHeader + this->ne->segmentTableOffset, SEEK_SET);
 
         if (fread(this->nesegs, 1, (sizeof(struct exe_ne_segment) * this->ne->segmentCount), this->fd) != (sizeof(struct exe_ne_segment) * this->ne->segmentCount)) {
             if (ferror(this->fd)) warn("Cannot read %s", this->fname);
@@ -91,12 +91,13 @@ void read_ne_segments(struct THIS *this) {
                     this->nesegs[i].relocations ? "RELOCINFO " : "",
                     this->nesegs[i].discardable ? "DISCARD " : ""
                 );
-                printf("  Offset      (file)   Length   (dec) \n");
-                printf("  0x%04"PRIx16"  0x%08"PRIx32"   0x%04"PRIx16"   %5"PRIu32"\n\n", 
+                printf("  Offset      (file)   Length   (dec)     Mem \n");
+                printf("  0x%04"PRIx32"  0x%08"PRIx32"   0x%04"PRIx32"   %5"PRIu32"  0x%04"PRIx32"\n\n", 
                     this->nesegs[i].segmentOffset, 
                     ((uint32_t) this->nesegs[i].segmentOffset << this->ne->offsetShiftCount), 
-                    this->nesegs[i].segmentSize ? this->nesegs[i].segmentSize : 0x10000, 
-                    this->nesegs[i].segmentSize ? this->nesegs[i].segmentSize : 0x10000);
+                    (uint32_t) this->nesegs[i].segmentSize ? this->nesegs[i].segmentSize : 0x10000, 
+                    (uint32_t) this->nesegs[i].segmentSize ? this->nesegs[i].segmentSize : 0x10000,
+                    (uint32_t) this->nesegs[i].minimumAllocation ? this->nesegs[i].minimumAllocation : 0x10000);
             }
         }
     } else err(1, "Cannot allocate memory");
