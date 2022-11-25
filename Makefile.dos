@@ -1,6 +1,6 @@
 PROGNAME = readexe
 CC		 = ia16-elf-gcc 
-CFLAGS	 = -march=i8086 -mcmodel=small -I.
+CFLAGS	 = -Os -march=i8086 -mcmodel=small -I.
 LDFLAGS  = -mcmodel=small
 RM		 = rm -f
 BINEXT	 = .exe
