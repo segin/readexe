@@ -296,8 +296,8 @@ int main(int argc, char *argv[]) {
             printf("Header size in paragraphs:\t0x%04"PRIx16" (%"PRIu32" bytes)\n", this->mz->hdrSize, (this->mz->hdrSize * mz_paragraph_size));
             printf("Minimum memory in paragraphs:\t0x%04"PRIx16" (%"PRIu32" bytes)\n", this->mz->minMemory, (this->mz->minMemory * mz_paragraph_size));
             printf("Maximum memory in paragraphs:\t0x%04"PRIx16" (%"PRIu32" bytes)\n", this->mz->maxMemory, (this->mz->maxMemory * mz_paragraph_size));
-            printf("Initial SS:SP (stack):\t\t%04"PRIx16":%04"PRIx16"\n", this->mz->stackSegment, this->mz->stackPointer);
             printf("Initial CS:IP (entrypoint):\t%04"PRIx16":%04"PRIx16"\n", this->mz->initCodeSeg, this->mz->initInstPtr);
+            printf("Initial SS:SP (stack):\t\t%04"PRIx16":%04"PRIx16"\n", this->mz->stackSegment, this->mz->stackPointer);
             printf("Initial stack pointer:\t\t0x%04"PRIx16"\n", this->mz->stackPointer);
             printf("Checksum:\t\t\t0x%04"PRIx16"\n", this->mz->checksum);
             printf("Relocation table offset:\t0x%04"PRIx16"\n", this->mz->relocationOffset);
