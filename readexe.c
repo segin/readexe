@@ -309,7 +309,7 @@ int main(int argc, char *argv[]) {
                     if (ferror(this->fd)) warn("Cannot read %s", this->fname);
                     if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
                 } else {
-                    printf("Offset to NE/PE header:\t\t0x%08"PRIx32"\n", this->mzx->nextHeader);
+                    printf("Offset to next header:\t\t0x%08"PRIx32"\n", this->mzx->nextHeader);
                     read_next_header(this);
                 }
             }
