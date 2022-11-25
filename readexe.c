@@ -74,7 +74,7 @@ void read_ne_exe(struct THIS *this) {
 void read_ne_segments(struct THIS *this) {
     printf("\n\n");
     if ((this->nesegs = (struct exe_ne_segment *) malloc(sizeof(struct exe_ne_segment) * this->ne->segmentCount))) {
-        fseek(this->fd, (this->ne->segmentTableOffset << this->ne->offsetShiftCount), SEEK_SET);
+        fseek(this->fd, this->mzx->nextHeader + (this->ne->segmentTableOffset << this->ne->offsetShiftCount), SEEK_SET);
 
         if (fread(this->nesegs, 1, (sizeof(struct exe_ne_segment) * this->ne->segmentCount), this->fd) != (sizeof(struct exe_ne_segment) * this->ne->segmentCount)) {
             if (ferror(this->fd)) warn("Cannot read %s", this->fname);
