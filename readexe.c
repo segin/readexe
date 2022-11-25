@@ -270,6 +270,7 @@ int main(int argc, char *argv[]) {
     const uint32_t mz_page_size = 512;
     const uint32_t mz_paragraph_size = 16;
     struct THIS *this;
+    uint32_t memuse;
 
 #ifdef NEED_ERR
     setprogname(argv[0]);
@@ -286,17 +287,17 @@ int main(int argc, char *argv[]) {
         if (    ((this->mz->magic[0] == 'M') && (this->mz->magic[1] == 'Z')) 
             ||  ((this->mz->magic[1] == 'M') && (this->mz->magic[0] == 'Z')) ) {
             printf("%s:\n", argv[1]);
-            printf("DOS executable with magic:\t%c%c\n", this->mz->magic[0], this->mz->magic[1]);
+            printf("DOS executable with magic:\t%c%c (0x%"PRIx8"%"PRIx8")\n", this->mz->magic[0], this->mz->magic[1], this->mz->magic[1], this->mz->magic[0]);
             printf("Number of executable pages:\t0x%04"PRIx16" (%"PRIu32"+ bytes)\n", this->mz->pageCount, ((this->mz->pageCount - 1) * mz_page_size));
             printf("Size of final page:\t\t%"PRIu16" bytes\n", this->mz->lastPageSize);
-            printf("Total code size:\t\t0x%08"PRIx32" (%"PRIu32" bytes)\n",
-                (((this->mz->pageCount - 1) * mz_page_size) + this->mz->lastPageSize),
-                (((this->mz->pageCount - 1) * mz_page_size) + this->mz->lastPageSize));
+            memuse = (((this->mz->pageCount - 1) * mz_page_size) + this->mz->lastPageSize);
+            printf("Total code size:\t\t0x%08"PRIx32" (%"PRIu32" bytes)\n", memuse, memuse);
             printf("Total relocation entries:\t0x%04"PRIx16"\n", this->mz->relocationEntries);
             printf("Header size in paragraphs:\t0x%04"PRIx16" (%"PRIu32" bytes)\n", this->mz->hdrSize, (this->mz->hdrSize * mz_paragraph_size));
             printf("Minimum heap in paragraphs:\t0x%04"PRIx16" (%"PRIu32" bytes)\n", this->mz->minMemory, (this->mz->minMemory * mz_paragraph_size));
             printf("Maximum heap in paragraphs:\t0x%04"PRIx16" (%"PRIu32" bytes)\n", this->mz->maxMemory, (this->mz->maxMemory * mz_paragraph_size));
-            printf("Minimum memory to load:\t\t%"PRIu32" bytes\n", (((this->mz->pageCount - 1) * mz_page_size) + this->mz->lastPageSize) + (this->mz->minMemory * mz_paragraph_size));
+            memuse += (this->mz->minMemory * mz_paragraph_size);
+            printf("Minimum memory to load:\t\t%"PRIu32" bytes\n", memuse);
             printf("Initial CS:IP (entrypoint):\t%04"PRIx16":%04"PRIx16"\n", this->mz->initCodeSeg, this->mz->initInstPtr);
             printf("Initial SS:SP (stack):\t\t%04"PRIx16":%04"PRIx16"\n", this->mz->stackSegment, this->mz->stackPointer);
             printf("Checksum:\t\t\t0x%04"PRIx16"\n", this->mz->checksum);
