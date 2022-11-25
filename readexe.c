@@ -215,7 +215,7 @@ void read_ne_header(struct THIS *this) {
             break;
     }
     printf("Target operating system:\t%s (0x%02"PRIx8")\n", msg, this->ne->targetOS);
-    printf("Executable flags: %s%s%s%s\n", 
+    printf("Executable flags:\t\t%s%s%s%s\n", 
         this->ne->os2LFN ? "LONGFILENAME " : "",
         this->ne->os2PMode ? "PROTECTEDMODE " : "",
         this->ne->os2Fonts ? "PROPORTIONALFONTS " : "",
@@ -269,6 +269,7 @@ void destroy_this(struct THIS *this) {
     if (this->mzx) free(this->mzx);
     if (this->mz) free(this->mz);
     if ((fclose(this->fd))) err(1, "Cannot close %s", this->fname);
+    free(this);
 }
 
 int main(int argc, char *argv[]) {
