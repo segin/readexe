@@ -82,7 +82,7 @@ void read_ne_segments(struct THIS *this) {
         } else {
             for(int i = 0; i < this->ne->segmentCount; i++) {
                 printf("Segment %d: %s%s%s%s%s%s%s%s\n", i, 
-                    this->nesegs[i].segType ? "CODE " : "DATA ",
+                    this->nesegs[i].segType ? "DATA " : "CODE ",
                     this->nesegs[i].allocated ? "ALLOCATED " : "",
                     this->nesegs[i].loaded ? "LOADED " : "",
                     this->nesegs[i].relocatable ? "MOVEABLE " : "",
