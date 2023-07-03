@@ -102,7 +102,6 @@ void read_ne_segments(struct THIS *this) {
             }
         }
     } else err(1, "Cannot allocate memory");
-    printf("Debugging method / read_ne_segments() reached.\n");
 }
 
 void get_ne_modules_count(struct THIS *this) {
