@@ -92,6 +92,7 @@ void read_ne_segments(struct THIS *this) {
                     this->nesegs[i].discardable ? "DISCARD " : ""
                 );
                 printf("  Offset      (file)   Length   (dec)     Mem \n");
+                /* While the underlying structures contain 16-bit values, 32-bit values are used in RAM to account for the case of a value of zero, equal to 0x10000. */
                 printf("  0x%04"PRIx32"  0x%08"PRIx32"   0x%04"PRIx32"   %5"PRIu32"  0x%04"PRIx32"\n\n", 
                     this->nesegs[i].segmentOffset, 
                     ((uint32_t) this->nesegs[i].segmentOffset << this->ne->offsetShiftCount), 
