@@ -28,7 +28,28 @@ struct exe_le_header {
     uint16_t    cpuType;
     uint16_t    osType;
     uint32_t    version;
-    uint32_t    flags;
+    union {
+        uint32_t flags;
+        struct {
+            uint32_t    _reserved1       : 1;
+            uint32_t    libInit          : 1;
+            uint32_t    _reserved2       : 1;
+            uint32_t    noInternalFixups : 1;
+            uint32_t    noExternalFixups : 1;
+            uint32_t    _reserved3       : 2;
+            uint32_t    pmIncompat       : 1;
+            uint32_t    pmCompat         : 1;
+            uint32_t    usesPM           : 1;
+            uint32_t    _reserved4       : 2;
+            uint32_t    moduleNotLoaded  : 1;
+            uint32_t    _reserved5       : 2;
+            uint32_t    libraryModule    : 1;
+            uint32_t    _reserved6       : 7;
+            uint32_t    protectedLibrary : 1;
+            uint32_t    deviceDriver     : 1;
+            uint32_t    _reserved7       : 7;
+        };
+    };
     uint32_t    pages;
     uint32_t    startingObject;
     uint32_t    entryPoint;
