@@ -296,7 +296,7 @@ int main(int argc, char *argv[]) {
             printf("%s:\n", argv[1]);
             printf("DOS executable with magic:\t%c%c (0x%"PRIx8"%"PRIx8")\n", this->mz->magic[0], this->mz->magic[1], this->mz->magic[1], this->mz->magic[0]);
             printf("Number of executable pages:\t0x%04"PRIx16" (%"PRIu32"+ bytes)\n", this->mz->pageCount, ((this->mz->pageCount - 1) * mz_page_size));
-            printf("Size of final page:\t\t%"PRIu16" bytes\n", this->mz->lastPageSize);
+            printf("Size of final page:\t\t0x%08"PRIx16" (%"PRIu16" bytes)\n", this->mz->lastPageSize, this->mz->lastPageSize);
             memuse = (((this->mz->pageCount - 1) * mz_page_size) + this->mz->lastPageSize);
             printf("Total code size:\t\t0x%08"PRIx32" (%"PRIu32" bytes)\n", memuse, memuse);
             printf("Total relocation entries:\t0x%04"PRIx16"\n", this->mz->relocationEntries);
