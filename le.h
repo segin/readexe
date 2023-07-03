@@ -20,4 +20,77 @@
 
 #include <stdint.h>
 
+struct exe_le_header { 
+    char        magic[2]; /* "LE" or "LX" */
+    uint8_t     byteOrder;
+    uint8_t     wordOrder;
+    uint32_t    level;
+    uint16_t    cpuType;
+    uint16_t    osType;
+    uint32_t    version;
+    uint32_t    flags;
+    uint32_t    pages;
+    uint32_t    startingObject;
+    uint32_t    entryPoint;
+    uint32_t    stackObject;
+    uint32_t    stackPointer;
+    uint32_t    pageSize;
+    union {
+        uint32_t    lastPage;   /* LE */
+        uint32_t    pageShift;  /* LX */
+    };
+    uint32_t    fixupSize;
+    uint32_t    fixupChecksum;
+    uint32_t    loaderSize;
+    uint32_t    loaderChecksum;
+    uint32_t    objectTableOffset;
+    uint32_t    objectCount;
+    uint32_t    objectMapOffset;
+    uint32_t    idataMapOffset;
+    uint32_t    resourceOffset;
+    uint32_t    resourceCount;
+    uint32_t    resourceNameOffset;
+    uint32_t    entryTableOffset;
+    uint32_t    moduleDirectiveOffset;
+    uint32_t    moduleDirectiveCount;
+    uint32_t    fixupPageTableOffset;
+    uint32_t    fixupRecordTableOffset;
+    uint32_t    importModuleNameTableOffset;
+    uint32_t    importModuleNameTableCount;
+    uint32_t    importProcNameTableOffset;
+    uint32_t    pageChecksumTableOffset;
+    uint32_t    preloadPageCount;
+    uint32_t    nonresidentNameTableOffset;
+    uint32_t    nonresidentNameTableSize;
+    uint32_t    nonresidentNameTableChecksum;
+    uint32_t    autodataObject;
+    uint32_t    debugSymbolsfOffset;
+    uint32_t    debugSymbolsfSize;
+    uint32_t    instancePagePreloadCount;
+    uint32_t    instancePageDemandLoadCount;
+    uint32_t    heapSize;
+    uint32_t    stackSize;
+    union {
+        uint8_t lxReserved[20];
+        struct  { 
+            uint8_t leReserved[8];
+            uint32_t windowsResourceOffset;
+            uint32_t windowsResourceSize;
+            uint32_t windowsDeviceID;
+            uint32_t windowsDDKVersion;
+        };
+    };
+};
+
+enum exe_le_header_cputypes {
+    CPU_286 = 1,
+    CPU_386,
+    CPU_486,
+};
+
+enum exe_le_ostypes {
+    LE_OS_OS2 = 1,
+    LE_OS_WINDOWS = 4
+};
+
 #endif /* LE_H */
