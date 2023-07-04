@@ -263,7 +263,7 @@ void read_next_header(struct THIS *this) {
                        ((next_magic[0] == 'L') && (next_magic[1] == 'X'))) {
                 printf("\n\n");
                 printf("Linear Executable header found at offset 0x%08"PRIx32"\n", this->mzx->nextHeader);
-                // read_le_exe(this);
+                read_le_exe(this);
             } else {
                 printf("\n\n");
                 printf("Unknown next header type: %c%c/0x%04"PRIx16"\n", next_magic[0], next_magic[1], *((uint16_t *) &next_magic));
