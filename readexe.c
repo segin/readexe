@@ -281,6 +281,8 @@ struct THIS *init_this(void) {
 }
 
 void destroy_this(struct THIS *this) {
+    if (this->le) free(this->le);
+    if (this->nemods) free(this->nemods);
     if (this->nesegs) free(this->nesegs);
     if (this->ne) free(this->ne);
     if (this->mzx) free(this->mzx);
