@@ -52,6 +52,8 @@ void read_next_header(struct THIS *this);
 void read_ne_header(struct THIS *this);
 void get_ne_modules_count(struct THIS *this);
 
+void read_le_exe(struct THIS *this);
+
 struct THIS *init_this(void);
 void destroy_this(struct THIS *this);
 int main(int argc, char *argv[]);
@@ -223,6 +225,19 @@ void read_ne_header(struct THIS *this) {
         this->ne->os2Fonts ? "PROPORTIONALFONTS " : "",
         this->ne->fastLoad ? "GANGLOADAREA " : ""); 
     printf("Windows version:\t\t%"PRIu8".%"PRIu8" (0x%04"PRIx16")\n", this->ne->windowsVersionMajor, this->ne->windowsVersionMinor, this->ne->windowsVersion);
+}
+
+void read_le_exe(struct THIS *this) {
+    if ((this->le = (struct exe_le_header *) malloc(sizeof(struct exe_le_header)))) { 
+        fseek(this->fd, this->mzx->nextHeader, SEEK_SET);
+        if (fread(this->ne, 1, sizeof(struct exe_le_header), this->fd)!= sizeof(struct exe_le_header)) {
+            if (ferror(this->fd)) warn("Cannot read %s", this->fname);
+            if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
+        } else {
+            printf("Linear Executable format is a WIP. No output code yet.\n");
+        }
+    } else err(1, "Cannot allocate memory");
+    return;
 }
 
 void read_next_header(struct THIS *this) {
