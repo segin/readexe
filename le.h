@@ -107,6 +107,7 @@ enum exe_le_header_cputypes {
     CPU_286 = 1,
     CPU_386,
     CPU_486,
+    CPU_586
 };
 
 enum exe_le_ostypes {
