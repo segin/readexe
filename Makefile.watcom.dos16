@@ -2,9 +2,9 @@
 
 PROGNAME = readexe
 CC       = wcc
-LD       = wlink
+LD       = wcl
 CFLAGS   = -i="./include" -za99 -zq -bt=dos -bm -s -I. -D_WATCOM
-LDFLAGS  = option quiet
+LDFLAGS  = 
 RM       = del
 BINEXT   = .exe
 OBJEXT   = obj
@@ -12,7 +12,7 @@ SRC      = readexe.c err.c
 OBJ      = readexe.$(OBJEXT) err.$(OBJEXT)
 
 $(PROGNAME)$(BINEXT): $(OBJ)
-    $(LD) name $(PROGNAME) system dos op m op st=16384 file { $(OBJ) }
+    $(LD) $(CFLAGS) $(LDFLAGS) -fe=$(PROGNAME)$(BINEXT) $(OBJ)
 
 readexe.$(OBJEXT): readexe.c
     $(CC) $(CFLAGS) -fo=$@ $<
