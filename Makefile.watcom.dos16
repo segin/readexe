@@ -3,7 +3,7 @@
 PROGNAME = readexe
 CC       = wcc
 LD       = wlink
-CFLAGS   = -i="./include" -zq -bt=dos -bm -s -I. -D_WATCOM
+CFLAGS   = -i="./include" -za99 -zq -bt=dos -bm -s -I. -D_WATCOM
 LDFLAGS  = option quiet
 RM       = del
 BINEXT   = .exe
