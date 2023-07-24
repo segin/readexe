@@ -2,6 +2,7 @@
 
 PROGNAME = readexe
 CC       = wcc386
+LD       = wcl386
 CFLAGS   = -i="./include" -za99 -zq -bt=dos -w4 -s -I. -D_WATCOM
 LDFLAGS  = option quiet
 RM       = del
@@ -11,7 +12,7 @@ SRC      = readexe.c err.c
 OBJ      = readexe.$(OBJEXT) err.$(OBJEXT)
 
 $(PROGNAME)$(BINEXT): $(OBJ)
-    $(CC) $(CFLAGS) -fe=$(PROGNAME)$(BINEXT) $(OBJ)
+    $(LD) $(CFLAGS) -fe=$(PROGNAME)$(BINEXT) $(OBJ)
 
 readexe.$(OBJEXT): readexe.c
     $(CC) $(CFLAGS) -fo=$@ $<
