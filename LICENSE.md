@@ -1,6 +1,6 @@
 ## For all but `err.c`:
 
-* Copyright © 2019 Kirn Gill II \<segin2005@gmail.com>
+* Copyright © 2019-2023 Kirn Gill II \<segin2005@gmail.com>
  
 Permission to use, copy, modify, and/or distribute this software for
 any purpose with or without fee is hereby granted, provided that the
@@ -18,7 +18,7 @@ OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 * Copyright © 2006 Robert Millan
 * Copyright © 2011, 2019 Guillem Jover \<guillem@hadrons.org>
-* Copyright © 2019 Kirn Gill II \<segin2005@gmail.com>
+* Copyright © 2019-2023 Kirn Gill II \<segin2005@gmail.com>
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
