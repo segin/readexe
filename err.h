@@ -17,7 +17,11 @@
 
 #include <stdarg.h>
 #include <stdint.h>
-#include <stdnoreturn.h>
+#ifndef _WATCOM
+# include <stdnoreturn.h>
+#else
+# define noreturn
+#endif
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif

@@ -2,7 +2,7 @@
 
 PROGNAME = readexe
 CC       = wcc386
-CFLAGS   = -i="./include" -zq -bt=dos -w4 -s -I.
+CFLAGS   = -i="./include" -zq -bt=dos -w4 -s -I. -D_WATCOM
 LDFLAGS  = option quiet
 RM       = del
 BINEXT   = .exe
