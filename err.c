@@ -34,7 +34,11 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdnoreturn.h>
+#ifndef _WATCOM
+# include <stdnoreturn.h>
+#else
+# define noreturn
+#endif
 
 #ifdef NEED_PROGNAME
 char *__progname;
