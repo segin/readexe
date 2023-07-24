@@ -1,0 +1,24 @@
+# Makefile for readexe using OpenWatcom and wmake for 16-bit DOS
+
+PROGNAME = readexe
+CC       = wcc
+LD       = wcl
+CFLAGS   = -i="./include" -za99 -zq -bt=dos -s -I. -D_WATCOM
+LDFLAGS  = 
+RM       = del
+BINEXT   = .exe
+OBJEXT   = obj
+SRC      = readexe.c err.c
+OBJ      = readexe.$(OBJEXT) err.$(OBJEXT)
+
+$(PROGNAME)$(BINEXT): $(OBJ)
+    $(LD) $(CFLAGS) $(LDFLAGS) -fe=$(PROGNAME)$(BINEXT) $(OBJ)
+
+readexe.$(OBJEXT): readexe.c
+    $(CC) $(CFLAGS) -fo=$@ $<
+
+err.$(OBJEXT): err.c
+    $(CC) $(CFLAGS) -fo=$@ $<
+
+clean:
+    $(RM) $(PROGNAME)$(BINEXT) $(OBJ)
