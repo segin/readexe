@@ -20,3 +20,4 @@ stamp-h1
 .deps
 autom4te.cache
 readexe.err
+err.err
