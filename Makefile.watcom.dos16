@@ -4,7 +4,7 @@ PROGNAME = readexe
 CC       = wcc
 LD       = wcl
 CFLAGS   = -i="./include" -za99 -zq -bt=dos -s -I. -D_WATCOM
-LDFLAGS  = 
+LDFLAGS  = -ldos
 RM       = del
 BINEXT   = .exe
 OBJEXT   = obj
