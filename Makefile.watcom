@@ -1,0 +1,21 @@
+# Makefile for readexe using OpenWatcom and wmake
+
+PROGNAME = readexe
+CC       = wcc386
+CFLAGS   = -i="./include" -zq -bt=dos -w4 -s -I.
+LDFLAGS  = option quiet
+RM       = del
+BINEXT   = .exe
+OBJEXT   = obj
+SRC      = readexe.c err.c
+OBJ      = $(SRC:.c=.$(OBJEXT))
+
+$(PROGNAME)$(BINEXT): $(OBJ)
+    $(CC) $(CFLAGS) -fe=$(PROGNAME)$(BINEXT) $(OBJ)
+
+.%$(OBJEXT): %.c
+    $(CC) $(CFLAGS) -fo=$@ $<
+
+clean:
+    $(RM) $(PROGNAME)$(BINEXT) *.$(OBJEXT)
+
