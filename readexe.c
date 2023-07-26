@@ -75,6 +75,7 @@ void read_ne_exe(struct THIS *this) {
 }
 
 void read_ne_segments(struct THIS *this) {
+    uint32_t seg, segsz, minalloc;
     printf("\n\n");
     if ((this->nesegs = (struct exe_ne_segment *) malloc(sizeof(struct exe_ne_segment) * this->ne->segmentCount))) {
         fseek(this->fd, this->mzx->nextHeader + this->ne->segmentTableOffset, SEEK_SET);
@@ -96,6 +97,9 @@ void read_ne_segments(struct THIS *this) {
                 );
                 printf("  Offset      (file)   Length   (dec)     Mem \n");
                 /* While the underlying structures contain 16-bit values, 32-bit values are used in RAM to account for the case of a value of zero, equal to 0x10000. */
+                seg = this->nesegs[i].segmentOffset; 
+                segsz = (uint32_t) this->nesegs[i].segmentSize ? this->nesegs[i].segmentSize : 0x10000;
+                minalloc = (uint32_t) this->nesegs[i].minimumAllocation ? this->nesegs[i].minimumAllocation : 0x10000;
                 printf("  0x%04"PRIx32"  0x%08"PRIx32"   0x%04"PRIx32"   %5"PRIu32"  0x%04"PRIx32"\n\n", 
                     this->nesegs[i].segmentOffset, 
                     ((uint32_t) this->nesegs[i].segmentOffset << this->ne->offsetShiftCount), 
@@ -230,7 +234,7 @@ void read_ne_header(struct THIS *this) {
 void read_le_exe(struct THIS *this) {
     if ((this->le = (struct exe_le_header *) malloc(sizeof(struct exe_le_header)))) { 
         fseek(this->fd, this->mzx->nextHeader, SEEK_SET);
-        if (fread(this->ne, 1, sizeof(struct exe_le_header), this->fd)!= sizeof(struct exe_le_header)) {
+        if (fread(this->le, 1, sizeof(struct exe_le_header), this->fd)!= sizeof(struct exe_le_header)) {
             if (ferror(this->fd)) warn("Cannot read %s", this->fname);
             if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
         } else {
