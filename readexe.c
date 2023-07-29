@@ -51,7 +51,7 @@ void read_ne_names_import(struct THIS *this);
 void read_next_header(struct THIS *this);
 void read_ne_header(struct THIS *this);
 void get_ne_modules_count(struct THIS *this);
-
+void read_le_header(struct THIS *this);
 void read_le_exe(struct THIS *this);
 
 struct THIS *init_this(void);
@@ -229,6 +229,10 @@ void read_ne_header(struct THIS *this) {
         this->ne->os2Fonts ? "PROPORTIONALFONTS " : "",
         this->ne->fastLoad ? "GANGLOADAREA " : ""); 
     printf("Windows version:\t\t%"PRIu8".%"PRIu8" (0x%04"PRIx16")\n", this->ne->windowsVersionMajor, this->ne->windowsVersionMinor, this->ne->windowsVersion);
+}
+
+void read_le_header(struct THIS *this) {
+    char *msg;
 }
 
 void read_le_exe(struct THIS *this) {
