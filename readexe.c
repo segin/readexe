@@ -101,11 +101,11 @@ void read_ne_segments(struct THIS *this) {
                 segsz = (uint32_t) this->nesegs[i].segmentSize ? this->nesegs[i].segmentSize : 0x10000;
                 minalloc = (uint32_t) this->nesegs[i].minimumAllocation ? this->nesegs[i].minimumAllocation : 0x10000;
                 printf("  0x%04"PRIx32"  0x%08"PRIx32"   0x%04"PRIx32"   %5"PRIu32"  0x%04"PRIx32"\n\n", 
-                    this->nesegs[i].segmentOffset, 
-                    ((uint32_t) this->nesegs[i].segmentOffset << this->ne->offsetShiftCount), 
-                    (uint32_t) this->nesegs[i].segmentSize ? this->nesegs[i].segmentSize : 0x10000, 
-                    (uint32_t) this->nesegs[i].segmentSize ? this->nesegs[i].segmentSize : 0x10000,
-                    (uint32_t) this->nesegs[i].minimumAllocation ? this->nesegs[i].minimumAllocation : 0x10000);
+                    seg, 
+                    seg << this->ne->offsetShiftCount, 
+                    segsz, 
+                    segsz,
+                    minalloc);
             }
         }
     } else err(1, "Cannot allocate memory");
