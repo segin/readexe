@@ -3,8 +3,8 @@
 PROGNAME = readexe
 CC       = wcc386
 LD       = wcl386
-CFLAGS   = -i="." -za99 -zq -bt=dos -w4 -s -I. -D_WATCOM
-LDFLAGS  = -l=dos4g
+CFLAGS   = -i="." -za99 -zq -bt=nt -w4 -s -I. -D_WATCOM
+LDFLAGS  = -l=nt
 RM       = del
 BINEXT   = .exe
 OBJEXT   = o
