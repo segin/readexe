@@ -54,6 +54,6 @@ struct exe_mz_new_header {
 struct exe_mz_reloc { 
     uint16_t    offset;                     /* */
     uint16_t    segment;
-}   
+};
 
 #endif
