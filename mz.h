@@ -51,4 +51,9 @@ struct exe_mz_new_header {
     uint32_t    nextHeader;                 /* offset to actual NE/PE header, aka e_lfanew */ 
 };
 
+struct exe_mz_reloc { 
+    uint16_t    offset;                     /* */
+    uint16_t    segment;
+}   
+
 #endif
