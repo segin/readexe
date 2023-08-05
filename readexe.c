@@ -53,6 +53,7 @@ void read_ne_header(struct THIS *this);
 void get_ne_modules_count(struct THIS *this);
 void read_le_header(struct THIS *this);
 void read_le_exe(struct THIS *this);
+void read_mz_reloc(struct THIS *this);
 
 struct THIS *init_this(void);
 void destroy_this(struct THIS *this);
@@ -299,6 +300,21 @@ void destroy_this(struct THIS *this) {
     free(this);
 }
 
+void read_mz_reloc(struct THIS *this) {
+    struct exe_mz_reloc reloc;
+    printf("MZ EXE relocaton table\n"
+           "Number of relocations: %d\n", this->mz->relocationEntries);
+    fseek(this->fd, this->mz->relocationOffset, SEEK_SET);
+    for(int i=0; i<this->mz->relocationEntries; i++)
+        if (fread(&reloc, 1, sizeof(struct exe_mz_reloc), this->fd)!= sizeof(struct exe_mz_reloc)) {
+            if (ferror(this->fd)) warn("Cannot read %s", this->fname);
+            if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
+        } else {
+            printf("  [%d] %04x:%04x\n", i, reloc.segment, reloc.offset);
+        }
+    return;
+}
+
 int main(int argc, char *argv[]) {
     const uint32_t mz_page_size = 512;
     const uint32_t mz_paragraph_size = 16;
@@ -335,7 +351,8 @@ int main(int argc, char *argv[]) {
             printf("Initial SS:SP (stack):\t\t%04"PRIx16":%04"PRIx16"\n", this->mz->stackSegment, this->mz->stackPointer);
             printf("Checksum:\t\t\t0x%04"PRIx16"\n", this->mz->checksum);
             printf("Relocation table offset:\t0x%04"PRIx16"\n", this->mz->relocationOffset);
-            printf("Overlay:\t\t\t0x%04"PRIx16"\n", this->mz->overlayNumber);
+            printf("Overlay:\t\t\t0x%04"PRIx16"\n\n", this->mz->overlayNumber);
+            if (this->mz->relocationEntries) read_mz_reloc(this);
             /* check for next header */
             if(this->mz->relocationOffset >= 0x40) {
                 if (!(this->mzx = malloc(sizeof(struct exe_mz_new_header)))) err(1, "Cannot allocate memory");
