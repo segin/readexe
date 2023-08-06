@@ -315,6 +315,13 @@ void read_mz_reloc(struct THIS *this) {
     return;
 }
 
+void display_help(void) { 
+    printf(
+        "readexe: Displays information on various Microsoft EXE formats.\n"
+    );
+    exit(0);
+}
+
 int main(int argc, char *argv[]) {
     const uint32_t mz_page_size = 512;
     const uint32_t mz_paragraph_size = 16;
