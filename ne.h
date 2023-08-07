@@ -158,7 +158,8 @@ enum exe_ne_header_ostypes {
     OS_WINDOWS,                             /* Windows */
     OS_MSDOS,                               /* MS-DOS 4.00 for the European market used NE executables */
     OS_WIN386,                              /* Windows/386 2.x specific */
-    OS_BOSS,                                /* Borland Operating System Services */
+    OS_BOSS,                                /* Borland Operating System Services and HX DPMI-16 */
+    OS_HX,                                  /* HX DPMI-32 */
     OS_PHARLAP286OS2 = 0x81,                /* Phar Lap 286|DOS-Extender emulating OS/2 */
     OS_PHARLAP286WIN                        /* Phar Lap 286|DOS-Extender emulating Windows (?) */
 };

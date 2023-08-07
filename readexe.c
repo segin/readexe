@@ -217,7 +217,10 @@ void read_ne_header(struct THIS *this) {
             msg = "Windows/386";
             break;
         case OS_BOSS:
-            msg = "Borland Operating System Services";
+            msg = "Borland Operating System Services or HX Extender DPMI-16";
+            break;
+        case OS_HX:
+            msg = "HX Extender DPMI-32";
             break;
         case OS_PHARLAP286OS2:
             msg = "Phar Lap 286|DOS-Extender (OS/2)";
@@ -305,7 +308,7 @@ void destroy_this(struct THIS *this) {
 
 void read_mz_reloc(struct THIS *this) {
     struct exe_mz_reloc reloc;
-    
+
     printf("MZ EXE relocaton table\n"
            "Number of relocations: %d\n", this->mz->relocationEntries);
     fseek(this->fd, this->mz->relocationOffset, SEEK_SET);
