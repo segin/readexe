@@ -43,6 +43,7 @@ struct THIS {
     int ne_moduleCount;                     /* number of module references in modules table */
     struct exe_ne_module *nemods;           /* NE imported modules */
     struct exe_le_header *le;               /* Linear Executable (LE/LX) header */
+    int wx_modcount;                        /* W3/W4 LE module count */
 };
 
 void read_ne_exe(struct THIS *this);
