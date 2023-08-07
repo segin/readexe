@@ -78,6 +78,7 @@ void read_ne_exe(struct THIS *this) {
 
 void read_ne_segments(struct THIS *this) {
     uint32_t seg, segsz, minalloc;
+
     printf("\n\n");
     if ((this->nesegs = (struct exe_ne_segment *) malloc(sizeof(struct exe_ne_segment) * this->ne->segmentCount))) {
         fseek(this->fd, this->mzx->nextHeader + this->ne->segmentTableOffset, SEEK_SET);
@@ -134,6 +135,7 @@ void read_ne_names_import(struct THIS *this) {
 
 void read_ne_header(struct THIS *this) {
     char *msg;
+
     printf("New Executable with magic:\t%c%c\n", this->ne->magic[0], this->ne->magic[1]);
     printf("Linker version:\t\t\t%"PRIu8".%"PRIu8"\n", this->ne->linkerMajor, this->ne->linkerMinor);
     printf("Entry table offset:\t\t0x%04" PRIx16 " (File offset 0x%08" PRIx32 ")\n", this->ne->entryTableOffset, ((uint32_t) this->ne->entryTableOffset + this->mzx->nextHeader));
@@ -303,6 +305,7 @@ void destroy_this(struct THIS *this) {
 
 void read_mz_reloc(struct THIS *this) {
     struct exe_mz_reloc reloc;
+    
     printf("MZ EXE relocaton table\n"
            "Number of relocations: %d\n", this->mz->relocationEntries);
     fseek(this->fd, this->mz->relocationOffset, SEEK_SET);
