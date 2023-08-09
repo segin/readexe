@@ -309,6 +309,7 @@ void destroy_this(struct THIS *this) {
 
 void read_mz_reloc(struct THIS *this) {
     struct exe_mz_reloc reloc;
+    uint32_t oldoffset = ftell(this->fd);
 
     printf("MZ EXE relocaton table\n"
            "Number of relocations: %d\n", this->mz->relocationEntries);
@@ -320,6 +321,7 @@ void read_mz_reloc(struct THIS *this) {
         } else {
             printf("  [%d] %04x:%04x\n", i, reloc.segment, reloc.offset);
         }
+    fseek(this->fd, oldoffset, SEEK_SET);
     return;
 }
 
