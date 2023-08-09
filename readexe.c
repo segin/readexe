@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <inttypes.h>
+#include <unistd.h>
 #include <err.h> /* -I. or such for platforms without err.h */
 
 #ifdef HAVE_CONFIG_H
@@ -278,7 +279,7 @@ void read_next_header(struct THIS *this) {
                        ((next_magic[0] == 'L') && (next_magic[1] == 'X'))) {
                 printf("\n\n");
                 printf("Linear Executable header found at offset 0x%08"PRIx32"\n", this->mzx->nextHeader);
-                read_le_exe(this);
+                read_le_exe(this);            
             } else {
                 printf("\n\n");
                 printf("Unknown next header type: %c%c/0x%04"PRIx16"\n", next_magic[0], next_magic[1], *((uint16_t *) &next_magic));
@@ -325,6 +326,12 @@ void read_mz_reloc(struct THIS *this) {
 void display_help(void) { 
     printf(
         "readexe: Displays information on various Microsoft EXE formats.\n"
+        "Version 0.1.1\n\n"
+        "  Usage: readexe [-h] [-n offset] EXEFILE.EXE\n\n"
+        "  -n\tManually specify offset to next header.\n"
+            "\toffset is read as decimal unless prefixed 0x/0X.\n"
+        "  -h\tDisplay this help.\n\n"
+        "Report bugs at https://github.com/segin/readexe\n"
     );
     exit(0);
 }
@@ -334,14 +341,44 @@ int main(int argc, char *argv[]) {
     const uint32_t mz_paragraph_size = 16;
     struct THIS *this;
     uint32_t memuse;
+    int option;
+    char *endptr;
+    long int noffset = -1;
 
 #ifdef NEED_ERR
     setprogname(argv[0]);
 #endif
     this = init_this();
-    if (argc < 2) errx(1, "Not enough arguments.");
-    this->fname = argv[1];
+    if (argc < 2) { 
+        warnx("Not enough arguments.");
+        display_help();
+    }
+    while((option = getopt(argc, argv, "hn:")) != -1) {
+        switch(option) {
+            case 'h':
+            case '?':
+                display_help();
+                break;
+            case 'n':
+                if (optarg[0] == '0' && (optarg[1] == 'x' || optarg[1] == 'X')) {
+                    noffset = strtol(optarg, &endptr, 16);
+                } else {
+                    noffset = strtol(optarg, &endptr, 10);
+                }
+
+                if (*endptr != '\0') err(1, "Invalid value: %s\n", optarg);
+                break;                
+            default:
+                abort();
+        }
+    }
+    if(optind < argc) this->fname = argv[optind]; else display_help();
     if (!(this->fd = fopen(this->fname, "rb"))) err(1, "Cannot open %s", this->fname);
+    if (noffset != -1) { 
+        if (!(this->mzx = malloc(sizeof(struct exe_mz_new_header)))) err(1, "Cannot allocate memory");
+        this->mzx->nextHeader = noffset;
+        read_next_header(this);
+    }
     if (!(this->mz = malloc(sizeof(struct exe_mz_header)))) err(1, "Cannot allocate memory");
     if (fread(this->mz, 1, sizeof(struct exe_mz_header), this->fd) != sizeof(struct exe_mz_header)) {
         if (ferror(this->fd)) warn("Cannot read %s", this->fname);
