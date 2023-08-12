@@ -45,6 +45,7 @@ struct THIS {
     int ne_moduleCount;                     /* number of module references in modules table */
     struct exe_ne_module *nemods;           /* NE imported modules */
     struct exe_le_header *le;               /* Linear Executable (LE/LX) header */
+    struct exe_w3_header *w3;               /* W3 header */
     int wx_modcount;                        /* W3/W4 LE module count */
 };
 
@@ -56,6 +57,7 @@ void read_ne_header(struct THIS *this);
 void get_ne_modules_count(struct THIS *this);
 void read_le_header(struct THIS *this);
 void read_le_exe(struct THIS *this);
+void read_w3_exe(struct THIS *this);
 void read_mz_reloc(struct THIS *this);
 
 struct THIS *init_this(void);
@@ -257,6 +259,32 @@ void read_le_exe(struct THIS *this) {
     return;
 }
 
+void read_w3_exe(struct THIS *this) {
+    struct exe_w3_modentry mod;
+    
+    if ((this->w3 = (struct exe_w3_header *) malloc(sizeof(struct exe_w3_header)))) { 
+        fseek(this->fd, this->mzx->nextHeader, SEEK_SET);
+        if (fread(this->w3, 1, sizeof(struct exe_w3_header), this->fd)!= sizeof(struct exe_w3_header)) {
+            if (ferror(this->fd)) warn("Cannot read %s", this->fname);
+            if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
+        } else {
+            printf(
+                "VxD Module Table:\n"
+                "   ID   Name          Offset      Size       (dec)\n"
+                "------------------------------------------------------\n"
+            );
+            this->wx_modcount = this->w3->modcount;
+            for(int i=0; i<this->wx_modcount; i++)  
+                if (fread(&mod, 1, sizeof(struct exe_w3_modentry), this->fd)!= sizeof(struct exe_w3_modentry)) {
+                    if (ferror(this->fd)) warn("Cannot read %s", this->fname);
+                    if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
+                } else 
+                    printf("  [%02x] \"%s\"     0x%08"PRIx32"  0x%08"PRIx32" (%"PRIu32" bytes)\n", i, mod.name, mod.offset, mod.size, mod.size);
+        }
+    } else err(1, "Cannot allocate memory");
+    return;
+}
+
 void read_next_header(struct THIS *this) {
     char next_magic[2];
 
@@ -280,7 +308,11 @@ void read_next_header(struct THIS *this) {
                        ((next_magic[0] == 'L') && (next_magic[1] == 'X'))) {
                 printf("\n\n");
                 printf("Linear Executable header found at offset 0x%08"PRIx32"\n", this->mzx->nextHeader);
-                read_le_exe(this);            
+                read_le_exe(this);
+            } else if ((next_magic[0] == 'W') && (next_magic[1] == '3')) {
+                printf("\n\n");
+                printf("W3 Executable header found at offset 0x%08"PRIx32"\n", this->mzx->nextHeader);
+                read_w3_exe(this);                           
             } else {
                 printf("\n\n");
                 printf("Unknown next header type: %c%c/0x%04"PRIx16"\n", next_magic[0], next_magic[1], *((uint16_t *) &next_magic));

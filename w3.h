@@ -18,4 +18,17 @@
 #ifndef W3_H
 #define W3_H
 
+struct exe_w3_header {
+    char        magic[2];
+    uint16_t    _unknown1;
+    uint16_t    modcount;
+    char        _unknown2[10];
+};
+
+struct exe_w3_modentry {
+    char        name[8];
+    uint32_t    offset;
+    uint32_t    size;
+};
+
 #endif /* W3_H */
