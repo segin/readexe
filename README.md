@@ -39,4 +39,4 @@ Attempting to make DOS builds using other compilers is likely to fail. `readexe`
 
 ## Sample output
 
-An output sample [can be found here](http://sprunge.us/QIhmFA).
+An output sample [can be found here](https://gist.github.com/segin/9130ff2e1a671c7a1aa71aabfb58e502).
