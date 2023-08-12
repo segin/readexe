@@ -32,6 +32,7 @@
 #include "mz.h"
 #include "ne.h"
 #include "le.h"
+#include "w3.h"
 
 struct THIS {
     FILE *fd;                               /* standard I/O library file descriptor */
