@@ -254,9 +254,8 @@ void read_le_exe(struct THIS *this) {
         if (fread(this->le, 1, sizeof(struct exe_le_header), this->fd)!= sizeof(struct exe_le_header)) {
             if (ferror(this->fd)) warn("Cannot read %s", this->fname);
             if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
-        } else {
+        } else
             printf("Linear Executable format is a WIP. No output code yet.\n");
-        }
     } else err(1, "Cannot allocate memory");
     return;
 }
@@ -353,9 +352,8 @@ void read_mz_reloc(struct THIS *this) {
         if (fread(&reloc, 1, sizeof(struct exe_mz_reloc), this->fd)!= sizeof(struct exe_mz_reloc)) {
             if (ferror(this->fd)) warn("Cannot read %s", this->fname);
             if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
-        } else {
+        } else
             printf("  [%d] %04x:%04x\n", i, reloc.segment, reloc.offset);
-        }
     fseek(this->fd, oldoffset, SEEK_SET);
     return;
 }
@@ -449,9 +447,8 @@ int main(int argc, char *argv[]) {
                     read_next_header(this);
                 }
             }
-        } else {
+        } else
             fprintf(stdout, "Not a DOS/MZ executable: %s\n", this->fname);
-        }
     }
     destroy_this(this);
     return(0);
