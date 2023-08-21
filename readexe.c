@@ -26,7 +26,7 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #elif
-# define READEXE_VERSION "0.1.2"
+# define PACKAGE_VERSION "0.1.2"
 #endif
 
 /* Big assumptions on little-endianiness here */
@@ -363,7 +363,7 @@ void read_mz_reloc(struct THIS *this) {
 void display_help(void) { 
     printf(
         "readexe: Displays information on various Microsoft EXE formats.\n"
-        "Version "READEXE_VERSION"\n\n"
+        "Version "PACKAGE_VERSION"\n\n"
         "  Usage: readexe [-h] [-n offset] EXEFILE.EXE\n\n"
         "  -n\tManually specify offset to next header.\n"
             "\toffset is read as decimal unless prefixed 0x/0X.\n"
