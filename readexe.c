@@ -25,7 +25,7 @@
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
-#elif
+#else
 # define VERSION "0.1.2"
 #endif
 
@@ -397,12 +397,10 @@ int main(int argc, char *argv[]) {
                 display_help();
                 break;
             case 'n':
-                if (optarg[0] == '0' && (optarg[1] == 'x' || optarg[1] == 'X')) {
+                if (optarg[0] == '0' && (optarg[1] == 'x' || optarg[1] == 'X'))
                     noffset = strtol(optarg, &endptr, 16);
-                } else {
+                else
                     noffset = strtol(optarg, &endptr, 10);
-                }
-
                 if (*endptr != '\0') err(1, "Invalid value: %s\n", optarg);
                 break;                
             default:
