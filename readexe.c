@@ -395,7 +395,6 @@ int main(int argc, char *argv[]) {
             case 'h':
             case '?':
                 display_help();
-                break;
             case 'n':
                 if (optarg[0] == '0' && (optarg[1] == 'x' || optarg[1] == 'X'))
                     noffset = strtol(optarg, &endptr, 16);
