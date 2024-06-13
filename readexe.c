@@ -76,8 +76,7 @@ void read_ne_exe(struct THIS *this) {
         } else {
             read_ne_header(this);
             read_ne_segments(this);
-            get_ne_modules_count(this);
-            printf("Modules count: %u\n", this->ne_moduleCount);
+
         }
     } else err(1, "Cannot allocate memory");
     return;
@@ -147,17 +146,6 @@ void read_ne_relocs(struct THIS *this) {
     }
     fseek(this->fd, oldoffset, SEEK_SET);
     free(relocentry);
-}
-
-void get_ne_modules_count(struct THIS *this) {
-    uint16_t tmp;
-
-    this->ne_moduleCount = 0;
-    fseek(this->fd, (this->ne->modulesTableOffset + this->mzx->nextHeader), SEEK_SET);
-    do { 
-        fread(&tmp, 2, 1, this->fd); 
-        if (tmp) this->ne_moduleCount++;
-    } while (tmp);
 }
 
 void get_ne_names_import_count(struct THIS *this) {
@@ -313,7 +301,7 @@ void read_w3_exe(struct THIS *this) {
                     printf("  [%02x] \"%s\"     0x%08"PRIx32"  0x%08"PRIx32" (%"PRIu32" bytes)\n", i, mod.name, mod.offset, mod.size, mod.size);
         }
     } else err(1, "Cannot allocate memory");
-    return;
+    return; 
 }
 
 void read_next_header(struct THIS *this) {
@@ -362,7 +350,7 @@ struct THIS *init_this(void) {
 
 void destroy_this(struct THIS *this) {
     if (this->w3) free(this->w3);
-    if (this->le) free(this->le);
+        if (this->le) free(this->le);
     if (this->nemods) free(this->nemods);
     if (this->nesegs) free(this->nesegs);
     if (this->ne) free(this->ne);
