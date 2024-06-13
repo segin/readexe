@@ -415,6 +415,7 @@ int main(int argc, char *argv[]) {
     this = init_this();
     if (argc < 2) { 
         warnx("Not enough arguments.");
+        destroy_this(this);
         display_help();
     }
     while((option = getopt(argc, argv, "hn:")) != -1) {
