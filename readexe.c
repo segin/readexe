@@ -26,7 +26,7 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #else
-# define VERSION "0.1.3"
+# define VERSION "0.1.4"
 #endif
 
 /* Big assumptions on little-endianiness here */
@@ -129,7 +129,7 @@ void read_ne_relocs(struct THIS *this) {
     if(!relocentry) err(1, "Cannot allocate memory");
     for(i=0;i<this->ne->segmentCount;i++) {
         fseek(this->fd, this->nesegs[i].segmentOffset << this->ne->offsetShiftCount, SEEK_SET);
-        printf("Relocation table for segment %d:\n");
+        printf("Relocation table for segment %d:\n", i);
         fread(&segmentRelocationEntries, 2, 1, this->fd);
         if (segmentRelocationEntries) {
             for(j=0;j<segmentRelocationEntries;j++){
@@ -298,7 +298,7 @@ void read_w3_exe(struct THIS *this) {
             if (ferror(this->fd)) warn("Cannot read %s", this->fname);
             if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
         } else {
-            printf("VMM version: %"PRIu8".%"PRIu8" (0x%04"PRIx16")\n", this->w3->vmm_major, this->w3->vmm_minor, this->w3->vmm_version);
+            printf("VMM version: %"PRIu8".%"PRIu8"\n", this->w3->vmm_major, this->w3->vmm_minor);
             printf(
                 "VxD Module Table:\n"
                 "   ID   Name          Offset      Size       (dec)\n"
