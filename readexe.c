@@ -64,6 +64,7 @@ void read_mz_reloc(struct THIS *this);
 
 struct THIS *init_this(void);
 void destroy_this(struct THIS *this);
+void display_help(struct THIS *this);
 int main(int argc, char *argv[]);
 
 void read_ne_exe(struct THIS *this) {
