@@ -1,4 +1,4 @@
-# Makefile for readexe using OpenWatcom and wmake for 32-bit DOS extended
+# Makefile for readexe using OpenWatcom and wmake for Win32 builds
 
 PROGNAME = readexe
 CC       = wcc386
