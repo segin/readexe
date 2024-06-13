@@ -120,6 +120,35 @@ void read_ne_segments(struct THIS *this) {
     } else err(1, "Cannot allocate memory");
 }
 
+void read_ne_relocs(struct THIS *this) {
+    uint16_t segmentRelocationEntries, i, j;
+    off_t oldoffset = ftell(this->fd);
+    struct exe_ne_reloc *relocentry = malloc(sizeof(struct exe_ne_reloc));;
+    
+    if(!relocentry) err(1, "Cannot allocate memory");
+    for(i=0;i<this->ne->segmentCount;i++) {
+        fseek(this->fd, this->nesegs[i].segmentOffset << this->ne->offsetShiftCount, SEEK_SET);
+        printf("Relocation table for segment %d:\n");
+        fread(&segmentRelocationEntries, 2, 1, this->fd);
+        if (segmentRelocationEntries) {
+            for(j=0;j<segmentRelocationEntries;j++){
+                fread(relocentry, 1, sizeof(struct exe_ne_reloc), this->fd);
+                printf(" [%3d] ", j);
+                switch(relocentry->relocationType){
+                    case RELTYPE_INTREF:
+                        printf(" [%3d] ");
+                        break;
+                };    
+            }
+        } else 
+            printf("No relocations for segment.\n");
+        printf("\n");
+    }
+    fseek(this->fd, oldoffset, SEEK_SET);
+    free(relocentry);
+}
+
+
 void get_ne_modules_count(struct THIS *this) {
     uint16_t tmp;
 
@@ -343,7 +372,7 @@ void destroy_this(struct THIS *this) {
 
 void read_mz_reloc(struct THIS *this) {
     struct exe_mz_reloc reloc;
-    uint32_t oldoffset = ftell(this->fd);
+    off_t oldoffset = ftell(this->fd);
 
     printf("MZ EXE relocaton table\n"
            "Number of relocations: %d\n", this->mz->relocationEntries);

@@ -138,6 +138,41 @@ struct exe_ne_export {
     uint8_t     ordinal;
 };
 
+struct exe_ne_reloc {
+    uint8_t     addressType;
+    uint8_t     relocationType;
+    union {
+        struct { 
+            uint16_t    moduleReference;
+            union {
+                uint16_t    importNameOffset;
+                uint16_t    importOrdinal;
+            }
+        };
+        struct {
+            uint8_t     segment;
+            uint8_t     zero;
+            uint16_t    ordinal;
+        };
+    };          
+};
+
+enum exe_ne_reloc_address_type {
+    RADDR_LOWBYTE,
+    RADDR_SELECTOR = 2,
+    RADDR_POINTER32,
+    RADDR_OFFSET16 = 5,
+    RADDR_POINTER48 = 11,
+    RADDR_OFFSET16 = 13
+};
+
+enum exe_ne_reloc_type {
+    RELTYPE_INTREF,
+    RELTYPE_IMPORD,
+    RELTYPE_IMPNAME,
+    RELTYPE_OSFIXUP
+};
+
 enum exe_ne_header_data_typebits {
     DATA_NONE,
     DATA_SINGLEDATA,
