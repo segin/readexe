@@ -298,6 +298,7 @@ void read_w3_exe(struct THIS *this) {
             if (ferror(this->fd)) warn("Cannot read %s", this->fname);
             if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
         } else {
+            printf("VMM version: %d.%d\n", this->w3->vmm_major, this->w3->vmm_minor);
             printf(
                 "VxD Module Table:\n"
                 "   ID   Name          Offset      Size       (dec)\n"

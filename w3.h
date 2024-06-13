@@ -20,7 +20,8 @@
 
 struct exe_w3_header {
     char        magic[2];
-    uint16_t    _unknown1;
+    uint8_t     vmm_minor;
+    uint8_t     vmm_major;
     uint16_t    modcount;
     char        _unknown2[10];
 };
