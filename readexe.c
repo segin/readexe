@@ -387,7 +387,7 @@ void read_mz_reloc(struct THIS *this) {
     return;
 }
 
-void display_help(void) { 
+void display_help(struct THIS *this) { 
     printf(
         "readexe: Displays information on various Microsoft EXE formats.\n"
         "Version "VERSION"\n\n"
@@ -397,6 +397,7 @@ void display_help(void) {
         "  -h\tDisplay this help.\n\n"
         "Report bugs at https://github.com/segin/readexe\n"
     );
+    destroy_this(this);
     exit(0);
 }
 
@@ -415,14 +416,13 @@ int main(int argc, char *argv[]) {
     this = init_this();
     if (argc < 2) { 
         warnx("Not enough arguments.");
-        destroy_this(this);
-        display_help();
+        display_help(this);
     }
     while((option = getopt(argc, argv, "hn:")) != -1) {
         switch(option) {
             case 'h':
             case '?':
-                display_help();
+                display_help(this);
             case 'n':
                 if (optarg[0] == '0' && (optarg[1] == 'x' || optarg[1] == 'X'))
                     noffset = strtol(optarg, &endptr, 16);
