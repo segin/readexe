@@ -434,7 +434,7 @@ int main(int argc, char *argv[]) {
                 abort();
         }
     }
-    if(optind < argc) this->fname = argv[optind]; else display_help();
+    if(optind < argc) this->fname = argv[optind]; else display_help(this);
     if (!(this->fd = fopen(this->fname, "rb"))) err(1, "Cannot open %s", this->fname);
     if (noffset != -1) { 
         if (!(this->mzx = malloc(sizeof(struct exe_mz_new_header)))) err(1, "Cannot allocate memory");
