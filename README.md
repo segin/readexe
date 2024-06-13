@@ -37,6 +37,8 @@ make -f Makefile.dos
 
 Attempting to make DOS builds using other compilers is likely to fail. `readexe` is written using ISO C99 and ISO C11 features that the majority of DOS compilers predate. Modern DJGPP releases, also built upon GCC, can produce 32-bit extended DOS builds. 
 
+Building for Windows CE is experimental. You will need to use the CeGCC toolchain, I recommend the Enlyze fork (as it is a commercial fork started in 2024 and as well-supported as one will get) - https://github.com/enlyze/cegcc-build
+
 ## Sample output
 
 An output sample [can be found here](https://gist.github.com/segin/9130ff2e1a671c7a1aa71aabfb58e502).
