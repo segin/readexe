@@ -46,7 +46,7 @@ struct exe_mz_header {
 
 struct exe_mz_new_header {
     char        unknown[4];
-    uint16_t    behaviors;                  /* it's a bitfield but I don't have documentation */ 
+    uint16_t    behaviors;                  /* Multitasking MS-DOS behavior flags. */ 
     char        behaviorsAdditonal[26];     /* flexible format extra data, interpretation is dependent on bits set in behaviors bitfield. */ 
     uint32_t    nextHeader;                 /* offset to actual NE/PE header, aka e_lfanew */ 
 };

@@ -1,0 +1,18 @@
+PROGNAME = readexe
+CC		 = arm-mingw32ce-gcc 
+CFLAGS	 = -ggdb3 -Wall -Wextra -I. -D_WINCE
+LDFLAGS  = 
+RM		 = rm -f
+BINEXT	 = .exe
+OBJEXT	 = o
+SRC		 = readexe.c err.c
+OBJ		 = $(SRC:.c=.$(OBJEXT))
+
+# You can remove err.c from SRC on most modern systems. 
+# Add -I. to CFLAGS if you get linker/header errors.
+
+$(PROGNAME)$(BINEXT): $(OBJ)
+	$(CC) -o $(PROGNAME)$(BINEXT) $(LDFLAGS) $(OBJ)
+
+clean:
+	$(RM) $(PROGNAME)$(BINEXT) *.$(OBJEXT)

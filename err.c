@@ -29,7 +29,6 @@
  */
 
 #include "err.h"
-#include <errno.h>
 #include <string.h>
 #include <stdarg.h>
 #include <stdlib.h>
@@ -42,6 +41,16 @@
 
 #ifdef NEED_PROGNAME
 char *__progname;
+#endif
+
+#ifdef _WINCE
+static int errno;
+
+char *strerror(int code) { 
+	return "";
+}
+#else
+#include <errno.h>
 #endif
 
 void
