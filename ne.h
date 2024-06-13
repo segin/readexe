@@ -163,7 +163,7 @@ enum exe_ne_reloc_address_type {
     RADDR_POINTER32,
     RADDR_OFFSET16 = 5,
     RADDR_POINTER48 = 11,
-    RADDR_OFFSET16 = 13
+    RADDR_OFFSET32 = 13
 };
 
 enum exe_ne_reloc_type {
