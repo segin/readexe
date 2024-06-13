@@ -1,6 +1,6 @@
 # readexe configure.ac - input to GNU autoconf to generate "configure"
 
-AC_INIT([readexe], [0.1.2], [segin2005@gmail.com])
+AC_INIT([readexe], [0.1.4], [segin2005@gmail.com])
 AM_INIT_AUTOMAKE
 AC_PROG_CC
 AC_CONFIG_HEADERS([config.h])

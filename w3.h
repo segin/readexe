@@ -1,6 +1,6 @@
 /* readexe - Prints EXE info a la objdump/dumpbin/efd 
  * 
- * Copyright © 2019-2023 Kirn Gill II <segin2005@gmail.com>
+ * Copyright © 2019-2024 Kirn Gill II <segin2005@gmail.com>
  * 
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -20,8 +20,13 @@
 
 struct exe_w3_header {
     char        magic[2];
-    uint8_t     vmm_minor;
-    uint8_t     vmm_major;
+    union {
+        uint16_t    vmm_version;
+        struct {
+            uint8_t     vmm_minor;
+            uint8_t     vmm_major;
+        };
+    };
     uint16_t    modcount;
     char        _unknown2[10];
 };
