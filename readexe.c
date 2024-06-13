@@ -366,7 +366,7 @@ void destroy_this(struct THIS *this) {
     if (this->ne) free(this->ne);
     if (this->mzx) free(this->mzx);
     if (this->mz) free(this->mz);
-    if ((fclose(this->fd))) err(1, "Cannot close %s", this->fname);
+    if (this->fd) if ((fclose(this->fd))) err(1, "Cannot close %s", this->fname);
     free(this);
 }
 
