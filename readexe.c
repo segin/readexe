@@ -149,7 +149,6 @@ void read_ne_relocs(struct THIS *this) {
     free(relocentry);
 }
 
-
 void get_ne_modules_count(struct THIS *this) {
     uint16_t tmp;
 
