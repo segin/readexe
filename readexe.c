@@ -164,10 +164,11 @@ char *get_ne_import_module_name(struct THIS *this, int module) {
     } else {
         soff = (this->ne->importedNamesTableOffset + this->mzx->nextHeader) + loff;
         fseek(this->fd, soff, SEEK_SET);
-        if (size = fgetc(this->fd) != -1) {
+        size = fgetc(this->fd);
+        if (size != -1) {
             if (name = malloc(size + 1)) { 
                 memset(name, 0, size + 1);
-                if (fread(&name, 1, size, this->fd)!= size) {
+                if (fread(name, 1, size, this->fd)!= size) {
                     if (ferror(this->fd)) warn("Cannot read %s", this->fname);
                     if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
                 } else {
@@ -181,38 +182,20 @@ char *get_ne_import_module_name(struct THIS *this, int module) {
 }
 
 void read_ne_modules_import(struct THIS *this) {
-    int i, j;
-    off_t oldoffset = ftell(this->fd), moff, soff;
-    uint16_t loff;
-    uint8_t size;
-    char name[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    int i;
+    char *name;
 
     printf(
         "\n\n"
         "Imported modules:\n"
         "-----------------\n"
     );
-    fseek(this->fd, (this->ne->modulesTableOffset + this->mzx->nextHeader), SEEK_SET);
     for(i=0;i<this->ne->modRefCount;i++) {
-        if (fread(&loff, 1, sizeof(uint16_t), this->fd)!= sizeof(uint16_t)) {
-            if (ferror(this->fd)) warn("Cannot read %s", this->fname);
-            if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
-        } else {
-            soff = (this->ne->importedNamesTableOffset + this->mzx->nextHeader) + loff;
-            moff = ftell(this->fd);
-            fseek(this->fd, soff, SEEK_SET);
-            size = fgetc(this->fd);
-            if (fread(&name, 1, size, this->fd)!= size) {
-                if (ferror(this->fd)) warn("Cannot read %s", this->fname);
-                if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
-            } else {
-                printf("  [%2d]: %s\n", i, name);
-                memset(name, 0, 9);
-                fseek(this->fd, moff, SEEK_SET);
-            }
-        }
+        if(name = get_ne_import_module_name(this, i)) {
+            printf("  [%2d]: %s\n", i, name);
+            free(name);
+        } else errx(1, "Cannot read file: ", this->fname);
     }
-    fseek(this->fd, oldoffset, SEEK_SET);
 }
 
 void read_ne_header(struct THIS *this) {
