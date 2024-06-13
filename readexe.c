@@ -21,6 +21,7 @@
 #include <string.h>
 #include <inttypes.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <err.h> /* -I. or such for platforms without err.h */
 
 #ifdef HAVE_CONFIG_H
@@ -35,6 +36,7 @@
 #include "ne.h"
 #include "le.h"
 #include "w3.h"
+
 
 struct THIS {
     FILE *fd;                               /* standard I/O library file descriptor */
@@ -53,7 +55,7 @@ struct THIS {
 
 void read_ne_exe(struct THIS *this);
 void read_ne_segments(struct THIS *this);
-void read_ne_names_import(struct THIS *this);
+void read_ne_modules_import(struct THIS *this);
 void read_next_header(struct THIS *this);
 void read_ne_header(struct THIS *this);
 void get_ne_modules_count(struct THIS *this);
@@ -75,8 +77,8 @@ void read_ne_exe(struct THIS *this) {
             if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
         } else {
             read_ne_header(this);
+            read_ne_modules_import(this);
             read_ne_segments(this);
-
         }
     } else err(1, "Cannot allocate memory");
     return;
@@ -148,12 +150,69 @@ void read_ne_relocs(struct THIS *this) {
     free(relocentry);
 }
 
-void get_ne_names_import_count(struct THIS *this) {
-    
+char *get_ne_import_module_name(struct THIS *this, int module) {
+    int i = module * 2, j;
+    off_t oldoffset = ftell(this->fd), moff, soff;
+    uint16_t loff;
+    uint8_t size;
+    char *name;
+
+    fseek(this->fd, (this->ne->modulesTableOffset + this->mzx->nextHeader + i), SEEK_SET);
+    if (fread(&loff, 1, sizeof(uint16_t), this->fd)!= sizeof(uint16_t)) {
+        if (ferror(this->fd)) warn("Cannot read %s", this->fname);
+        if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
+    } else {
+        soff = (this->ne->importedNamesTableOffset + this->mzx->nextHeader) + loff;
+        fseek(this->fd, soff, SEEK_SET);
+        if (size = fgetc(this->fd) != -1) {
+            if (name = malloc(size + 1)) { 
+                memset(name, 0, size + 1);
+                if (fread(&name, 1, size, this->fd)!= size) {
+                    if (ferror(this->fd)) warn("Cannot read %s", this->fname);
+                    if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
+                } else {
+                    fseek(this->fd, oldoffset, SEEK_SET);
+                    return name;
+                }
+            } else err(1, "Cannot allocate memory");
+        } else warnx("Unexpected end of file: %s", this->fname);
+    }
+    return NULL; 
 }
 
-void read_ne_names_import(struct THIS *this) {
-    printf("Debug: this -> 0x%x\n", this);
+void read_ne_modules_import(struct THIS *this) {
+    int i, j;
+    off_t oldoffset = ftell(this->fd), moff, soff;
+    uint16_t loff;
+    uint8_t size;
+    char name[9] = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+    printf(
+        "\n\n"
+        "Imported modules:\n"
+        "-----------------\n"
+    );
+    fseek(this->fd, (this->ne->modulesTableOffset + this->mzx->nextHeader), SEEK_SET);
+    for(i=0;i<this->ne->modRefCount;i++) {
+        if (fread(&loff, 1, sizeof(uint16_t), this->fd)!= sizeof(uint16_t)) {
+            if (ferror(this->fd)) warn("Cannot read %s", this->fname);
+            if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
+        } else {
+            soff = (this->ne->importedNamesTableOffset + this->mzx->nextHeader) + loff;
+            moff = ftell(this->fd);
+            fseek(this->fd, soff, SEEK_SET);
+            size = fgetc(this->fd);
+            if (fread(&name, 1, size, this->fd)!= size) {
+                if (ferror(this->fd)) warn("Cannot read %s", this->fname);
+                if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
+            } else {
+                printf("  [%2d]: %s\n", i, name);
+                memset(name, 0, 9);
+                fseek(this->fd, moff, SEEK_SET);
+            }
+        }
+    }
+    fseek(this->fd, oldoffset, SEEK_SET);
 }
 
 void read_ne_header(struct THIS *this) {
