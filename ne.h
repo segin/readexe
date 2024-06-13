@@ -147,7 +147,7 @@ struct exe_ne_reloc {
             union {
                 uint16_t    importNameOffset;
                 uint16_t    importOrdinal;
-            }
+            };
         };
         struct {
             uint8_t     segment;
