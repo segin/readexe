@@ -1,6 +1,6 @@
 /* readexe - Prints EXE info a la objdump/dumpbin/efd 
  * 
- * Copyright © 2019-2023 Kirn Gill II <segin2005@gmail.com>
+ * Copyright © 2019-2024 Kirn Gill II <segin2005@gmail.com>
  * 
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -26,7 +26,7 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #else
-# define VERSION "0.1.2"
+# define VERSION "0.1.3"
 #endif
 
 /* Big assumptions on little-endianiness here */
