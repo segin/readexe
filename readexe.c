@@ -178,6 +178,8 @@ char *get_ne_import_module_name(struct THIS *this, int module) {
             } else err(1, "Cannot allocate memory");
         } else warnx("Unexpected end of file: %s", this->fname);
     }
+    /* we should never return NULL or even get here; either we have a valid malloc()'d string pointer or execution cannot continue.*/
+    abort("Reached end of get_ne_import_module_name()!");
     return NULL; 
 }
 
