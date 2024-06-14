@@ -179,7 +179,8 @@ char *get_ne_import_module_name(struct THIS *this, int module) {
         } else warnx("Unexpected end of file: %s", this->fname);
     }
     /* we should never return NULL or even get here; either we have a valid malloc()'d string pointer or execution cannot continue.*/
-    abort("Reached end of get_ne_import_module_name()!");
+    fprintf(stderr, "Reached end of get_ne_import_module_name()!");
+    abort();
     return NULL; 
 }
 
@@ -194,7 +195,7 @@ void read_ne_modules_import(struct THIS *this) {
     );
     for(i=0;i<this->ne->modRefCount;i++) {
         if(name = get_ne_import_module_name(this, i)) {
-            printf("  [%2d]: %s\n", i, name);
+            printf("  [%2d]: %s\n", i+1, name);
             free(name);
         } else errx(1, "Cannot read file: ", this->fname);
     }
@@ -330,7 +331,7 @@ void read_w3_exe(struct THIS *this) {
             if (ferror(this->fd)) warn("Cannot read %s", this->fname);
             if (feof(this->fd)) warnx("Unexpected end of file: %s", this->fname);
         } else {
-            printf("VMM version: %"PRIu8".%"PRIu8" (0x%04"PRIx16")\n", this->w3->vmm_major, this->w3->vmm_minor);
+            printf("VMM version: %"PRIu8".%"PRIu8" (0x%04"PRIx16")\n", this->w3->vmm_major, this->w3->vmm_minor, this->w3->vmm_version);
             printf(
                 "VxD Module Table:\n"
                 "   ID   Name          Offset      Size       (dec)\n"
@@ -457,6 +458,7 @@ int main(int argc, char *argv[]) {
             case 'h':
             case '?':
                 display_help(this);
+                break;
             case 'n':
                 if (optarg[0] == '0' && (optarg[1] == 'x' || optarg[1] == 'X'))
                     noffset = strtol(optarg, &endptr, 16);
