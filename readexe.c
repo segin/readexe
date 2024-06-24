@@ -279,7 +279,7 @@ void read_ne_header(struct THIS *this) {
             msg = "Windows";
             break;
         case OS_MSDOS:
-            msg = "MS-DOS 4.00 (Europe)";
+            msg = "MT MS-DOS 4.0";
             break;
         case OS_WIN386:
             msg = "Windows/386";
