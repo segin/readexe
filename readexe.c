@@ -460,9 +460,9 @@ int main(int argc, char *argv[]) {
                 display_help(this);
                 break;
             case 'n':
-                noffset = strtol(optarg, &endptr, 0);
-                if (*endptr != '\0') err(1, "Invalid value: %s\n", optarg);
-                break;                
+                noffset = strtoul(optarg, &endptr, 0);
+                if (*endptr != '\0' || (noffset == ULONG_MAX && errno == ERANGE)) err(1, "Invalid value: %s\n", optarg);
+                break;
             default:
                 abort();
         }
