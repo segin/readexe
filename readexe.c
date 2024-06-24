@@ -458,10 +458,7 @@ int main(int argc, char *argv[]) {
             case '?':
                 display_help(this);
             case 'n':
-                if (optarg[0] == '0' && (optarg[1] == 'x' || optarg[1] == 'X'))
-                    noffset = strtol(optarg, &endptr, 16);
-                else
-                    noffset = strtol(optarg, &endptr, 10);
+                noffset = strtol(optarg, &endptr, 0);
                 if (*endptr != '\0') err(1, "Invalid value: %s\n", optarg);
                 break;                
             default:
