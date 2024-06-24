@@ -21,6 +21,8 @@
 #include <string.h>
 #include <inttypes.h>
 #include <unistd.h>
+#include <limits.h>
+#include <errno.h>
 #include <fcntl.h>
 #include <err.h> /* -I. or such for platforms without err.h */
 
