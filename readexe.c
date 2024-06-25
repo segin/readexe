@@ -167,7 +167,7 @@ char *get_ne_import_module_name(struct THIS *this, int module) {
         soff = (this->ne->importedNamesTableOffset + this->mzx->nextHeader) + loff;
         fseek(this->fd, soff, SEEK_SET);
         size = fgetc(this->fd);
-        if ((int8_t) size != -1) {
+        if (((int8_t) size != -1) && ferror(this->fd)) {
             if (name = malloc(size + 1)) { 
                 memset(name, 0, size + 1);
                 if (fread(name, 1, size, this->fd)!= size) {
