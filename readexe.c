@@ -153,8 +153,8 @@ void read_ne_relocs(struct THIS *this) {
 }
 
 char *get_ne_import_module_name(struct THIS *this, int module) {
-    int i = module * 2, j;
-    off_t oldoffset = ftell(this->fd), moff, soff;
+    int i = module * 2;
+    off_t oldoffset = ftell(this->fd), soff;
     uint16_t loff;
     uint8_t size;
     char *name;
@@ -305,11 +305,15 @@ void read_ne_header(struct THIS *this) {
         this->ne->os2PMode ? "PROTECTEDMODE " : "",
         this->ne->os2Fonts ? "PROPORTIONALFONTS " : "",
         this->ne->fastLoad ? "GANGLOADAREA " : ""); 
+    if(this->ne->fastLoad) { 
+        printf("GangLoad/FastLoad area offset:\t0x%04"PRIx16"\n", this->ne->returnThunksOffset);
+        printf("GangLoad/FastLoad area size:\t0x%04"PRIx16"\n", this->ne->segmentReferenceOffset);        
+    }
     printf("Windows version:\t\t%"PRIu8".%"PRIu8" (0x%04"PRIx16")\n", this->ne->windowsVersionMajor, this->ne->windowsVersionMinor, this->ne->windowsVersion);
 }
 
 void read_le_header(struct THIS *this) {
-    char *msg;
+    char *msg = "";
 }
 
 void read_le_exe(struct THIS *this) {
